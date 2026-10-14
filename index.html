@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>NIAT | AI, Data Science &amp; Robotics Programs</title>
+<title>Bharosa | NIAT Admissions &amp; Programs</title>
 <meta name="description" content="Explore NIAT technology programs, admissions, campus life, and next steps. Ask Bharosa, the NIAT admissions guide, a question.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23e89a00'/%3E%3Cpath d='M15 16h34a5 5 0 0 1 5 5v20a5 5 0 0 1-5 5H34L21 56v-10h-6a5 5 0 0 1-5-5V21a5 5 0 0 1 5-5Z' fill='%231b2366'/%3E%3Cpath d='m23 31 6 6 13-13' fill='none' stroke='%23ffb21e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&family=Noto+Sans+Kannada:wght@400;600&family=Noto+Sans+Malayalam:wght@400;600&display=swap" rel="stylesheet">
@@ -65,17 +66,25 @@ button{cursor:pointer}
 .navbtn[aria-current="page"] svg{color:var(--marigold)}
 
 .main{display:grid;grid-template-rows:auto minmax(0,1fr);min-width:0;min-height:0}
-.top{display:flex;align-items:center;gap:20px;padding:12px 22px;border-bottom:1px solid var(--line);background:var(--surface);flex-wrap:wrap}
-.brand h1{margin:0;font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
-.brand p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
-.pipe{display:flex;align-items:center;margin-left:auto;flex-wrap:wrap;row-gap:6px}
-.node{display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;color:var(--muted);background:var(--sunk);transition:border-color .2s,color .2s}
+.top{position:relative;isolation:isolate;display:flex;align-items:center;gap:16px;padding:12px 22px;border-bottom:1px solid var(--line);background:linear-gradient(115deg,var(--surface) 0%,var(--surface) 62%,var(--indigo-soft) 160%);flex-wrap:wrap}
+.top::before{position:absolute;z-index:-1;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--marigold),var(--indigo));content:""}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{width:42px;height:42px;flex:none;display:grid;place-items:center;border:1px solid rgba(232,154,0,.32);border-radius:14px;background:linear-gradient(145deg,var(--marigold-soft),var(--surface));box-shadow:0 5px 14px rgba(38,49,138,.09)}
+.brand-mark svg{width:25px;height:25px}
+.brand-copy{min-width:0}
+.brand h1{margin:0;font-size:20px;font-weight:800;letter-spacing:-.035em;line-height:1.1}
+.brand p{margin:4px 0 0;font-size:12px;color:var(--muted);white-space:nowrap}
+.brand .brand-kicker{margin:0 0 3px;color:var(--indigo);font-size:9px;font-weight:800;letter-spacing:.14em;line-height:1;text-transform:uppercase}
+.top .btn{min-height:38px;padding:7px 12px;border-radius:10px;box-shadow:0 2px 8px rgba(21,26,46,.05)}
+.pipe{display:flex;align-items:center;margin-left:auto;flex-wrap:wrap;row-gap:6px;padding:5px 7px;border:1px solid var(--line);border-radius:15px;background:color-mix(in srgb,var(--surface) 84%,transparent);box-shadow:0 4px 16px rgba(21,26,46,.045)}
+.node{display:flex;align-items:center;gap:7px;padding:6px 10px;border-radius:999px;border:1px solid transparent;font-size:12px;color:var(--muted);background:transparent;transition:border-color .2s,color .2s,background .2s}
+.node .lb{white-space:nowrap}
 .node .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
 .node .st{color:var(--marigold);font-weight:600;max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .3s}
-.node.live{border-color:var(--marigold);color:var(--ink)}
+.node.live{border-color:var(--marigold);color:var(--ink);background:var(--marigold-soft)}
 .node.live .st{max-width:140px}
 .node.live .dot{background:var(--marigold);animation:pulse 1.1s ease-in-out infinite}
-.wire{width:18px;height:1px;background:var(--line)}
+.wire{width:14px;height:1px;background:linear-gradient(90deg,var(--line),var(--indigo-soft))}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,154,0,.5)}50%{box-shadow:0 0 0 5px rgba(232,154,0,0)}}
 
 .view{min-height:0;height:100%;overflow:hidden}
@@ -357,7 +366,11 @@ dialog::backdrop{background:rgba(10,12,25,.45)}
   .mark{display:none}
   .main{order:1}
   .top{padding:10px 14px;gap:10px}
-  .pipe{margin-left:0;width:100%}
+  .brand .brand-kicker,.brand p:not(.brand-kicker){display:none}
+  .pipe{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-left:0;width:100%}
+  .pipe .wire{display:none}
+  .pipe .node{padding:6px 8px;font-size:11px}
+  .pipe .node .lb{display:inline}
   .wire{width:8px}
   .flow{grid-template-columns:1fr}
   .step{border-left:0 !important}
@@ -514,10 +527,16 @@ dialog::backdrop{background:rgba(10,12,25,.45)}
   <div class="main">
     <header class="top">
       <div class="brand">
-        <h1>Bharosa</h1>
-        <p>Turns hesitant NIAT parents into campus visits, in their own language</p>
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5v-7Z" fill="var(--rail)"/><path d="m8.5 10 2.4 2.4L15.5 8" stroke="var(--marigold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="brand-copy">
+          <p class="brand-kicker">NIAT admissions workspace</p>
+          <h1>Bharosa</h1>
+          <p>Turn conversations into confident next steps</p>
+        </div>
       </div>
-      <button class="btn" id="show-home" type="button">Public site</button>
+      <button class="btn" id="show-home" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3h7v7M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Public site</button>
       <div class="pipe" aria-label="Live system activity">
         <span class="node" id="n-inbox"><span class="dot"></span><span class="lb">Lead inbox</span><span class="st"></span></span>
         <span class="wire"></span>
