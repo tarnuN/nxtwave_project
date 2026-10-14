@@ -323,13 +323,17 @@ dialog::backdrop{background:rgba(10,12,25,.45)}
 .site-chat-bubble.user{align-self:flex-end;background:#e2f6e9;border-top-right-radius:4px}
 .site-chat-quick{display:flex;flex-wrap:wrap;gap:7px}
 .site-chat-quick button{border:1px solid #d4e7d9;border-radius:999px;padding:7px 10px;background:#fff;color:#266a3b;font-size:11.5px;font-weight:600}
+.site-chat-activity{align-self:flex-start;max-width:94%;padding:8px 10px;border:1px solid #e6d8ad;border-left:3px solid #e89a00;border-radius:8px;background:#fffaf0;color:#55431e;font-size:11.5px;line-height:1.4}
+.site-chat-activity strong{display:block;margin-bottom:2px;color:#30250f;font-size:11.5px}
 .site-chat-error{padding:9px 10px;border-radius:8px;background:#fff0f0;color:#8e1b23;font-size:12px;line-height:1.45}
 .site-chat-error button{display:block;margin-top:6px;border:0;background:none;color:#8e1b23;padding:0;text-decoration:underline;font-weight:700}
 .site-chat-form{display:flex;align-items:flex-end;gap:8px;padding:10px;border-top:1px solid #e8e9ed;background:#fff}
 .site-chat-form textarea{min-width:0;min-height:42px;max-height:110px;flex:1;resize:none;padding:10px;border:1px solid #dfe1e6;border-radius:10px;background:#fff;font-size:13px;color:#202534}
 .site-chat-form button{height:42px;padding:0 13px;border:0;border-radius:9px;background:#99171b;color:#fff;font-weight:700}
 .site-chat-form button:disabled{opacity:.55;cursor:wait}
-.site-chat-disclaimer{padding:0 12px 9px;background:#fff;color:#697181;font-size:10.5px}
+.site-chat-consent{display:flex;align-items:flex-start;gap:7px;padding:9px 12px 4px;background:#fff;color:#50596a;font-size:10.5px;line-height:1.4}
+.site-chat-consent input{flex:none;margin:2px 0 0;accent-color:#99171b}
+.site-chat-disclaimer{padding:0 12px 9px;background:#fff;color:#697181;font-size:10px;line-height:1.4}
 
 @media (max-width:1180px){
   .conv{grid-template-columns:270px minmax(0,1fr) 290px}
@@ -805,7 +809,7 @@ function makeServerSample(){
 /* ---------- UI state ---------- */
 const ui = {view: "conv", sel: null, pane: "leads", streaming: null, busy: new Set(), auto: null, speed: "quick", ctl: new Map(), pending: new Set()};
 let sample = null, sampleChecked = false;
-const siteChat = {open: false, busy: false, messages: [], error: ""};
+const siteChat = {open: false, busy: false, messages: [], activities: [], error: "", consent: false, leadId: null, requestTools: new Map()};
 
 function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("on"), 3200); }
 
@@ -836,6 +840,7 @@ function clean(t){ return String(t || "").replace(/^\s*(Parent|NIAT AGENT|Agent|
 function renderSiteChat(){
   const panel = $("#site-chat-panel");
   const history = siteChat.messages.map(m => `<div class="site-chat-bubble ${m.role === "user" ? "user" : "assistant"}">${esc(m.content)}</div>`).join("");
+  const activities = siteChat.activities.map(a => `<div class="site-chat-activity" role="status"><strong>${esc(a.title)}</strong>${esc(a.detail)}</div>`).join("");
   const welcome = `<div class="site-chat-bubble assistant">Hi! I’m Bharosa, NIAT’s admissions guide. Ask me about programs, admissions, fees, campus life, or next steps.</div>`;
   const suggestions = !siteChat.messages.length ? `<div class="site-chat-quick">${["Programs after 12th","Admissions process","Campus life","Fees and scholarships"].map(text => `<button type="button" data-chat-prompt="${esc(text)}">${esc(text)}</button>`).join("")}</div>` : "";
   const typing = siteChat.busy ? `<div class="site-chat-bubble assistant" aria-label="Bharosa is replying">Bharosa is typing…</div>` : "";
@@ -843,17 +848,102 @@ function renderSiteChat(){
   panel.innerHTML = `
     <div class="site-chat-head">
       <span class="site-chat-avatar" aria-hidden="true">B</span>
-      <div class="site-chat-title"><strong>Bharosa · NIAT guide</strong><span>Ask a question to get started</span></div>
+      <div class="site-chat-title"><strong>Bharosa · NIAT guide</strong><span>AI admissions agent · multilingual demo</span></div>
       <button class="site-chat-close" type="button" data-chat-close aria-label="Close chat">×</button>
     </div>
-    <div class="site-chat-messages" id="site-chat-messages">${welcome}${history}${typing}${suggestions}${error}</div>
+    <div class="site-chat-messages" id="site-chat-messages">${welcome}${history}${activities}${typing}${suggestions}${error}</div>
     <form class="site-chat-form" id="site-chat-form">
       <textarea id="site-chat-compose" rows="1" aria-label="Your message" placeholder="Type your question…" ${siteChat.busy ? "disabled" : ""}></textarea>
       <button type="submit" ${siteChat.busy ? "disabled" : ""}>${siteChat.busy ? "…" : "Send"}</button>
     </form>
-    <div class="site-chat-disclaimer">Bharosa can make mistakes. Confirm fees, eligibility, and degree details with a counsellor.</div>`;
+    <label class="site-chat-consent"><input id="site-chat-consent" type="checkbox" ${siteChat.consent ? "checked" : ""}><span>Allow Bharosa to save details I share to this browser’s demo counsellor inbox. No phone number needed.</span></label>
+    <div class="site-chat-disclaimer">AI answers may be wrong; confirm details with NIAT. Demo leads and follow-up requests stay in this browser; no real counsellor is notified.</div>`;
   const messages = $("#site-chat-messages");
   messages.scrollTop = messages.scrollHeight;
+}
+
+function siteAgentTools(){
+  const record = (title, detail) => {
+    siteChat.activities.push({title, detail});
+    if (siteChat.activities.length > 6) siteChat.activities.shift();
+  };
+  const textValue = (value, max = 120) => String(value || "").trim().slice(0, max);
+  return [
+    {
+      name: "lookup_admissions_facts",
+      description: "Read the current admissions knowledge base for a factual question. Always use this before answering about NIAT programs, fees, admissions, campus life, placements, or degree details.",
+      inputSchema: {type: "object", properties: {topic: {type: "string", enum: ["program","degree","placements","fees","campus_life","parent_updates","admissions"]}}, required: ["topic"]},
+      execute: input => {
+        const topic = String(input.topic || "").toLowerCase();
+        const text = kbSections()[topic];
+        const found = Boolean(text);
+        const demo = found && /demo|placeholder|unverified|indicative/i.test(text);
+        record("Checked admissions facts", found ? `${topic.replace(/_/g, " ")} · ${demo ? "demo/unverified information" : "knowledge base"}` : `${topic.replace(/_/g, " ")} · no fact on file`);
+        pipe("inbox", "Checking facts");
+        return {topic, found, text: text || "No fact is available. Ask a counsellor to confirm.", demo_or_unverified: demo};
+      }
+    },
+    {
+      name: "save_visitor_lead",
+      description: "With explicit visitor consent only, save the parent and student details they have shared to this browser's demo lead inbox. Ask permission first, never request or save a phone number or email, and do not invent missing details.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          consent: {type: "boolean", description: "Must be true only after the visitor has checked the consent box."},
+          parent: {type: "string"}, student: {type: "string"}, city: {type: "string"},
+          state: {type: "string"}, language: {type: "string", enum: ["en","te","hi","ta","kn","ml"]},
+          concern: {type: "string"}
+        },
+        required: ["consent","parent","city"]
+      },
+      execute: async input => {
+        if (input.consent !== true || !siteChat.consent) return {saved: false, reason: "The visitor has not enabled the consent checkbox. Ask them to enable it before saving."};
+        const parent = textValue(input.parent, 80);
+        const city = textValue(input.city, 80);
+        if (!parent || !city) return {saved: false, reason: "A parent name and city are required. Ask the visitor for the missing detail."};
+        const isNew = !siteChat.leadId;
+        const id = siteChat.leadId || ("l-web-" + uid());
+        siteChat.leadId = id;
+        const lang = LANGS[input.language] ? input.language : "en";
+        await Store.saveLead(id, {
+          parent, relation: "Parent",
+          student: textValue(input.student, 80) || "Prospective student",
+          city, state: textValue(input.state, 80) || "Not shared",
+          lang, stream: "", source: "Public website chat (browser demo)",
+          concern: textValue(input.concern, 240), personality: "Visitor-led conversation",
+          stage: Store.lead(id)?.stage || "engaged", readiness: Store.lead(id)?.readiness || 20,
+          objections: Store.lead(id)?.objections || [], createdAt: Store.lead(id)?.createdAt || Date.now()
+        });
+        if (isNew) {
+          const transcript = siteChat.messages.map(m => ({
+            id: uid(), role: m.role === "user" ? "parent" : "agent", text: m.content, ts: Date.now()
+          }));
+          await Store.setThread(id, transcript);
+          Store.addEvent({type: "lead", leadId: id, text: parent + " (" + city + ") opted in from the public website"});
+        }
+        record(isNew ? "Added consented visitor to lead inbox" : "Updated visitor lead", `${parent} · ${city} · saved in this browser`);
+        pipe("inbox", isNew ? "Lead captured" : "Lead updated");
+        return {saved: true, parent, city, inbox: "This browser's counsellor demo inbox", external_notification: false};
+      }
+    },
+    {
+      name: "request_counsellor_followup",
+      description: "With explicit visitor consent and a saved visitor lead, create a follow-up request in this browser's counsellor demo queue. Do not claim a real counsellor was notified or has agreed to call.",
+      inputSchema: {type: "object", properties: {consent: {type: "boolean"}, reason: {type: "string"}, preferred_time: {type: "string"}}, required: ["consent","reason"]},
+      execute: async input => {
+        if (input.consent !== true || !siteChat.consent) return {queued: false, reason: "The visitor has not enabled the consent checkbox."};
+        if (!siteChat.leadId || !Store.lead(siteChat.leadId)) return {queued: false, reason: "No consented visitor lead exists yet. Ask permission and save the visitor's name and city first."};
+        const reason = textValue(input.reason, 180) || "Visitor requested counsellor follow-up";
+        const preferredTime = textValue(input.preferred_time, 100);
+        const lead = Store.lead(siteChat.leadId);
+        await Store.saveLead(lead.id, {stage: "handed_off", handoff: {reason, preferredTime, urgency: "normal", ts: Date.now()}});
+        Store.addEvent({type: "handoff", leadId: lead.id, text: lead.parent + " requested a counsellor follow-up: " + reason + (preferredTime ? " · Preferred time: " + preferredTime : "")});
+        record("Queued counsellor follow-up", `${lead.parent} · browser demo queue only; no real counsellor notified`);
+        pipe("desk", "Follow-up requested");
+        return {queued: true, preferred_time: preferredTime || "Not specified", external_notification: false, note: "This is recorded only in the browser demo. No real counsellor has been notified."};
+      }
+    }
+  ];
 }
 
 function setSiteChatOpen(open){
@@ -875,37 +965,74 @@ async function sendSiteChat(text, retry){
   if (!retry){
     siteChat.messages.push({role: "user", content: question});
     siteChat.error = "";
+    siteChat.requestTools = new Map();
+    if (siteChat.leadId) await Store.appendMsg(siteChat.leadId, {id: uid(), role: "parent", text: question, ts: Date.now()});
   }
   siteChat.busy = true;
   renderSiteChat();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30000);
   try {
-    const history = siteChat.messages.slice(-12).map(m => ({role: m.role, content: m.content}));
+    const history = siteChat.messages.slice(-16).map(m => ({role: m.role, content: m.content}));
     const messages = history.reduce((out, message) => {
       const previous = out[out.length - 1];
       if (previous && previous.role === message.role) previous.content += "\n\n" + message.content;
       else out.push({...message});
       return out;
     }, []);
-    const system = `You are Bharosa, a helpful NIAT admissions guide chatting with a prospective student or parent. Answer in the language the visitor uses. Keep replies warm, clear and conversational, usually 2-4 short sentences. Use only the facts in the admissions information below; do not invent fees, scholarships, degree partners, placements, policies, or guarantees. This information may contain demo or unverified details: label them as indicative and ask a counsellor to confirm. If you do not know an answer, say so and suggest asking a NIAT counsellor. Do not claim you booked a visit or contacted a human. Admissions information:\n${Store.kb().slice(0, 12000)}`;
-    const response = await fetch("/api/claude", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({tier: "quick", messages, system}),
-      signal: controller.signal
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok){
-      const detail = data.error || response.statusText || "Request failed";
-      if (response.status === 401 || response.status === 403) throw new Error("OpenRouter rejected its API key. Check OPENROUTER_API_KEY in Vercel settings. " + detail);
-      if (response.status === 402) throw new Error("OpenRouter account needs credits. Check its balance and try again.");
-      if (response.status === 429) throw new Error("The AI service is busy or rate-limited. Wait a moment and try again.");
-      throw new Error(detail);
+    const tools = siteAgentTools();
+    const toolSpecs = tools.map(t => ({name: t.name, description: t.description, input_schema: t.inputSchema}));
+    const system = `You are Bharosa, a multilingual NIAT admissions growth agent. Answer in the language the visitor uses, warmly and without pressure. You have real tools: lookup_admissions_facts reads the current knowledge base; save_visitor_lead writes a consented visitor to the shared counsellor demo inbox; request_counsellor_followup puts a consented lead into the demo follow-up queue. Use the fact lookup before factual NIAT answers. Use only returned facts; never invent fees, scholarships, degree partners, placements, policies, or guarantees. These facts may be demo or unverified: clearly say so and ask a counsellor to confirm. Never request or store a phone number or email. Before using a lead or follow-up tool, ask the visitor's permission and wait for both their explicit yes and the consent checkbox. For lead capture, ask only for missing parent name and city; student, state, language and concern are optional. Never claim a real counsellor has been notified or a visit/call booked: these are browser-local demo actions only. Ask at most one simple question per reply. Keep replies concise and conversational. Admissions knowledge base:\n${Store.kb().slice(0, 12000)}`;
+    let reply = "";
+    for (let round = 0; round < 5; round++){
+      const response = await fetch("/api/claude", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({tier: "quick", messages, system, tools: toolSpecs}),
+        signal: controller.signal
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok){
+        const detail = data.error || response.statusText || "Request failed";
+        if (response.status === 401 || response.status === 403) throw new Error("OpenRouter rejected its API key. Check OPENROUTER_API_KEY in Vercel settings. " + detail);
+        if (response.status === 402) throw new Error("OpenRouter account needs credits. Check its balance and try again.");
+        if (response.status === 429) throw new Error("The AI service is busy or rate-limited. Wait a moment and try again.");
+        throw new Error(detail);
+      }
+      const blocks = Array.isArray(data.content) ? data.content : [];
+      const uses = blocks.filter(block => block.type === "tool_use");
+      if (!uses.length || data.stop_reason !== "tool_use"){
+        reply = blocks.filter(block => block.type === "text").map(block => block.text).join("").trim();
+        break;
+      }
+      messages.push({role: "assistant", content: blocks});
+      const results = [];
+      for (const use of uses){
+        const tool = tools.find(item => item.name === use.name);
+        if (!tool){
+          results.push({type: "tool_result", tool_use_id: use.id, content: "Unknown tool.", is_error: true});
+          continue;
+        }
+        let result = siteChat.requestTools.get(use.name);
+        if (!result){
+          try {
+            result = await tool.execute(use.input || {});
+          } catch (error) {
+            result = {error: error && error.message ? error.message : "Tool execution failed"};
+          }
+          siteChat.requestTools.set(use.name, result);
+        }
+        results.push({type: "tool_result", tool_use_id: use.id, content: JSON.stringify(result), is_error: Boolean(result && result.error)});
+      }
+      messages.push({role: "user", content: results});
+      renderSiteChat();
     }
-    const reply = (data.content || []).filter(block => block.type === "text").map(block => block.text).join("").trim();
-    if (!reply) throw new Error("The AI service returned an empty reply. Please try again.");
+    if (!reply) throw new Error("The agent could not complete this turn. Please try again.");
     siteChat.messages.push({role: "assistant", content: reply});
+    if (siteChat.leadId) {
+      await Store.appendMsg(siteChat.leadId, {id: uid(), role: "agent", text: reply, ts: Date.now()});
+      await insightTurn(siteChat.leadId, controller.signal);
+    }
     siteChat.error = "";
   } catch (error){
     siteChat.error = error && error.name === "AbortError"
@@ -1432,6 +1559,9 @@ $("#landing").addEventListener("input", e => {
     e.target.style.height = "auto";
     e.target.style.height = Math.min(e.target.scrollHeight, 110) + "px";
   }
+});
+$("#landing").addEventListener("change", e => {
+  if (e.target.id === "site-chat-consent") siteChat.consent = e.target.checked;
 });
 async function seedLeads(){
   pipe("inbox", "Importing", true);
