@@ -1,0 +1,11 @@
+{
+  "name": "bharosa-niat-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bharosa: multilingual AI agent that converts hesitant NIAT parents into campus visits",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "engines": { "node": ">=18" }
+}

@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bharosa · NIAT parent conversion agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&family=Noto+Sans+Kannada:wght@400;600&family=Noto+Sans+Malayalam:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF0F6; --surface:#FFFFFF; --sunk:#F6F7FB; --ink:#151A2E; --muted:#5B6179; --line:#DDE0EB;
+  --indigo:#26318A; --indigo-soft:#E4E7FA; --marigold:#E89A00; --marigold-soft:#FFF1D3;
+  --leaf:#1F7E52; --leaf-soft:#DDF3E7; --rose:#B8324F; --rose-soft:#FBE3E8;
+  --rail:#1B2366; --rail-ink:#C9CEF3; --rail-active:#FFFFFF;
+  --agent-bg:#26318A; --agent-ink:#FFFFFF; --receipt:#FFFBF1; --receipt-line:#E8C67A;
+  --chat:#E8EBF3; --dot:rgba(38,49,138,.07); --sel:#E4E7FA;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1018; --surface:#171A26; --sunk:#12141E; --ink:#ECEEF7; --muted:#9BA1BA; --line:#292D3F;
+    --indigo:#9AA6FF; --indigo-soft:#232A55; --marigold:#FFB21E; --marigold-soft:#3A2C0C;
+    --leaf:#4ACB8C; --leaf-soft:#123726; --rose:#FF7C95; --rose-soft:#3D1620;
+    --rail:#0A0C14; --rail-ink:#8C93B8; --rail-active:#FFFFFF;
+    --agent-bg:#2F3B9E; --agent-ink:#FFFFFF; --receipt:#1F1B10; --receipt-line:#6B5520;
+    --chat:#11131C; --dot:rgba(154,166,255,.06); --sel:#20253F;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1018; --surface:#171A26; --sunk:#12141E; --ink:#ECEEF7; --muted:#9BA1BA; --line:#292D3F;
+  --indigo:#9AA6FF; --indigo-soft:#232A55; --marigold:#FFB21E; --marigold-soft:#3A2C0C;
+  --leaf:#4ACB8C; --leaf-soft:#123726; --rose:#FF7C95; --rose-soft:#3D1620;
+  --rail:#0A0C14; --rail-ink:#8C93B8; --rail-active:#FFFFFF;
+  --agent-bg:#2F3B9E; --agent-ink:#FFFFFF; --receipt:#1F1B10; --receipt-line:#6B5520;
+  --chat:#11131C; --dot:rgba(154,166,255,.06); --sel:#20253F;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%;margin:0}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:"Schibsted Grotesk","Noto Sans Telugu","Noto Sans Devanagari","Noto Sans Tamil","Noto Sans Kannada","Noto Sans Malayalam",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--marigold);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+.app{display:grid;grid-template-columns:76px minmax(0,1fr);height:100%}
+.rail{background:var(--rail);display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 0}
+.mark{width:40px;height:40px;border-radius:12px;background:var(--marigold);display:grid;place-items:center;margin-bottom:14px}
+.mark svg{width:24px;height:24px}
+.navbtn{width:64px;border:0;background:transparent;color:var(--rail-ink);border-radius:12px;padding:9px 0 7px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:500}
+.navbtn svg{width:22px;height:22px}
+.navbtn:hover{color:var(--rail-active)}
+.navbtn[aria-current="page"]{color:var(--rail-active);background:rgba(255,255,255,.09)}
+.navbtn[aria-current="page"] svg{color:var(--marigold)}
+
+.main{display:grid;grid-template-rows:auto minmax(0,1fr);min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:20px;padding:12px 22px;border-bottom:1px solid var(--line);background:var(--surface);flex-wrap:wrap}
+.brand h1{margin:0;font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.brand p{margin:2px 0 0;font-size:12.5px;color:var(--muted)}
+.pipe{display:flex;align-items:center;margin-left:auto;flex-wrap:wrap;row-gap:6px}
+.node{display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;color:var(--muted);background:var(--sunk);transition:border-color .2s,color .2s}
+.node .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.node .st{color:var(--marigold);font-weight:600;max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .3s}
+.node.live{border-color:var(--marigold);color:var(--ink)}
+.node.live .st{max-width:140px}
+.node.live .dot{background:var(--marigold);animation:pulse 1.1s ease-in-out infinite}
+.wire{width:18px;height:1px;background:var(--line)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,154,0,.5)}50%{box-shadow:0 0 0 5px rgba(232,154,0,0)}}
+
+.view{min-height:0;height:100%;overflow:hidden}
+.view[hidden]{display:none}
+
+/* Conversations */
+.conv{display:grid;grid-template-columns:300px minmax(0,1fr) 330px;height:100%;min-height:0}
+.panetabs{display:none}
+.pane{min-height:0;display:flex;flex-direction:column;background:var(--surface)}
+.pane + .pane{border-left:1px solid var(--line)}
+.pane-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);min-height:62px}
+.pane-head h2{margin:0;font-size:15px;font-weight:700}
+.pane-head .count{color:var(--muted);font-weight:500}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:7px 12px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{border-color:var(--indigo)}
+.btn.primary{background:var(--indigo);border-color:var(--indigo);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#0E1018}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#0E1018}}
+.btn.gold{background:var(--marigold);border-color:var(--marigold);color:#1B1300}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn svg{width:15px;height:15px}
+.ml{margin-left:auto}
+
+.leadlist{overflow-y:auto;flex:1}
+.lead{display:block;width:100%;text-align:left;padding:13px 16px 12px;border:0;border-bottom:1px solid var(--line);background:transparent}
+.lead:hover{background:var(--sunk)}
+.lead[aria-current="true"]{background:var(--sel);box-shadow:inset 3px 0 0 var(--indigo)}
+.lead .r1{display:flex;align-items:baseline;gap:8px}
+.lead .nm{font-weight:700;font-size:14.5px}
+.lead .lg{margin-left:auto;font-size:12px;color:var(--muted)}
+.lead .r2{font-size:12.5px;color:var(--muted);margin-top:1px}
+.lead .r3{display:flex;align-items:center;gap:8px;margin-top:8px}
+.meter{flex:1;height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--marigold);border-radius:3px;transition:width .6s}
+.pill{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--muted);border:1px solid var(--line);white-space:nowrap}
+.pill.engaged{background:var(--indigo-soft);color:var(--indigo);border-color:transparent}
+.pill.warm{background:var(--marigold-soft);color:var(--marigold);border-color:transparent}
+.pill.hot,.pill.visit_booked{background:var(--leaf-soft);color:var(--leaf);border-color:transparent}
+.pill.handed_off{background:var(--leaf);color:#fff;border-color:transparent}
+.lead .obj{font-size:12px;color:var(--rose);margin-top:6px}
+
+.empty{padding:28px 20px;color:var(--muted);font-size:14px}
+.empty strong{display:block;color:var(--ink);font-size:16px;margin-bottom:6px}
+.empty .btn{margin-top:14px}
+
+.chat{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0;background:var(--chat)}
+.chathead{background:var(--surface);flex-wrap:wrap;row-gap:8px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--indigo-soft);color:var(--indigo);display:grid;place-items:center;font-weight:800;flex:none}
+.who .n{font-weight:700;font-size:15px;line-height:1.2}
+.who .s{font-size:12.5px;color:var(--muted)}
+.ctl{display:flex;gap:8px;align-items:center;margin-left:auto;flex-wrap:wrap}
+select.sel{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:6px 8px;font-size:13px}
+.msgs{overflow-y:auto;padding:22px clamp(12px,3vw,34px);display:flex;flex-direction:column;gap:9px;
+  background-image:radial-gradient(var(--dot) 1.2px,transparent 1.3px);background-size:18px 18px}
+.daynote{align-self:center;font-size:12px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:4px 10px;margin-bottom:6px;text-align:center;max-width:90%}
+.bubble{max-width:min(80%,540px);padding:9px 12px 6px;border-radius:14px;font-size:15.5px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.bubble.parent{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-top-left-radius:4px}
+.bubble.agent{align-self:flex-end;background:var(--agent-bg);color:var(--agent-ink);border-top-right-radius:4px}
+.bubble .meta{display:flex;gap:10px;justify-content:flex-end;align-items:center;font-size:11px;opacity:.7;margin-top:4px}
+.bubble .gl{border:0;background:transparent;padding:0;font-size:11px;text-decoration:underline;text-underline-offset:2px;color:inherit}
+.gloss{display:block;margin-top:6px;padding-top:6px;border-top:1px solid currentColor;border-top-color:color-mix(in srgb,currentColor 22%,transparent);font-size:13.5px;opacity:.85}
+.bubble.streaming{opacity:.92}
+.thinking{display:inline-flex;gap:4px;align-items:center}
+.thinking i{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.4;animation:blink 1.2s infinite}
+.thinking i:nth-child(2){animation-delay:.2s}.thinking i:nth-child(3){animation-delay:.4s}
+@keyframes blink{50%{opacity:1}}
+
+.receipt{align-self:flex-end;width:min(80%,440px);background:var(--receipt);border:1px dashed var(--receipt-line);border-radius:8px;padding:9px 12px 9px 14px;font-size:12.5px;position:relative;animation:stamp .35s ease-out}
+.receipt::before{content:"";position:absolute;left:-1px;top:8px;bottom:8px;width:3px;border-radius:2px;background:var(--marigold)}
+.receipt .h{display:flex;align-items:center;gap:7px;font-weight:700;font-size:12.5px}
+.receipt .h svg{width:15px;height:15px;color:var(--marigold);flex:none}
+.receipt .h .tag{margin-left:auto;font-weight:500;color:var(--muted);font-size:11px}
+.receipt .b{color:var(--muted);margin-top:3px;line-height:1.4}
+@keyframes stamp{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+
+.composer{background:var(--surface);border-top:1px solid var(--line);padding:10px 14px;display:flex;gap:8px;align-items:flex-end}
+.composer textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--sunk);min-height:44px;max-height:120px;font-size:15px}
+.composer .hint{font-size:11.5px;color:var(--muted);padding:0 14px 8px;background:var(--surface)}
+.notice{margin:0;padding:8px 14px;font-size:12.5px;background:var(--marigold-soft);color:var(--ink);border-top:1px solid var(--line)}
+
+.insight{overflow-y:auto}
+.ins-sec{padding:16px 18px;border-bottom:1px solid var(--line)}
+.ins-sec h3{margin:0 0 10px;font-size:12.5px;font-weight:600;color:var(--muted)}
+.gauge{display:flex;align-items:center;gap:14px}
+.gauge svg{width:132px;height:76px;flex:none}
+.gauge .big{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.gauge .lbl{font-size:12.5px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12.5px;padding:3px 9px;border-radius:999px;background:var(--rose-soft);color:var(--rose);font-weight:600}
+.chip.primary{background:var(--rose);color:#fff}
+.nba{font-size:14.5px;line-height:1.5}
+.brief{font-size:14px;line-height:1.55;background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:600}
+.sent{font-weight:700}
+.sent.positive,.sent.warming{color:var(--leaf)} .sent.skeptical,.sent.negative{color:var(--rose)}
+
+/* Desk */
+.scroll{overflow-y:auto;height:100%}
+.desk{padding:24px clamp(14px,3vw,34px) 40px;max-width:1280px}
+.desk h2{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0}
+.desk .sub{color:var(--muted);margin:4px 0 22px;font-size:14px;max-width:70ch}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.kpi{padding:16px 18px}
+.kpi + .kpi{border-left:1px solid var(--line)}
+.kpi .v{font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1.05}
+.kpi .k{font-size:13px;color:var(--muted);margin-top:4px}
+.kpi.gold .v{color:var(--marigold)} .kpi.green .v{color:var(--leaf)}
+.grid2{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;margin-top:18px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.box h3{margin:0 0 12px;font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.box h3 .c{color:var(--muted);font-weight:500;font-size:13px}
+.bars{display:flex;flex-direction:column;gap:9px}
+.barrow{display:grid;grid-template-columns:150px minmax(0,1fr) 34px;gap:10px;align-items:center;font-size:13px}
+.barrow .t{height:12px;background:var(--sunk);border-radius:3px;overflow:hidden;border:1px solid var(--line)}
+.barrow .t i{display:block;height:100%;background:var(--indigo);transition:width .6s}
+.barrow.obj .t i{background:var(--rose)}
+.barrow .n{text-align:right;font-weight:700}
+.queue{display:flex;flex-direction:column}
+.qitem{padding:12px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:start}
+.qitem:first-child{border-top:0;padding-top:0}
+.score{width:44px;height:44px;border-radius:12px;background:var(--marigold-soft);color:var(--marigold);display:grid;place-items:center;font-weight:800;font-size:17px}
+.qitem .t1{font-weight:700}
+.qitem .t2{font-size:12.5px;color:var(--muted)}
+.qitem .t3{font-size:13.5px;margin-top:5px;line-height:1.5}
+.qitem .acts{display:flex;flex-direction:column;gap:6px}
+.feed{display:flex;flex-direction:column;gap:0;max-height:420px;overflow-y:auto}
+.ev{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}
+.ev:first-child{border-top:0}
+.ev svg{width:18px;height:18px;color:var(--indigo);margin-top:1px}
+.ev .tm{color:var(--muted);font-size:12px;white-space:nowrap}
+.langs{display:flex;flex-wrap:wrap;gap:8px}
+.lang{border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:92px}
+.lang .v{font-size:20px;font-weight:800}
+.lang .k{font-size:12px;color:var(--muted)}
+
+/* Knowledge */
+.kb textarea{width:100%;min-height:340px;border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--sunk);font-size:14px;line-height:1.55;resize:vertical}
+.warn{background:var(--marigold-soft);border:1px solid var(--receipt-line);border-radius:10px;padding:10px 14px;font-size:13.5px;margin-bottom:14px}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:12.5px}
+
+/* System */
+.flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;margin-top:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.step{padding:18px 16px;position:relative}
+.step + .step{border-left:1px solid var(--line)}
+.step .i{width:30px;height:30px;border-radius:50%;background:var(--indigo);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;margin-bottom:10px}
+.step:nth-child(2) .i{background:var(--marigold);color:#1B1300}
+.step h4{margin:0 0 4px;font-size:15px}
+.step p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.5}
+.step .tech{margin-top:10px;font-size:12px;color:var(--indigo);font-weight:600}
+.loopnote{margin-top:14px;font-size:14px;color:var(--muted);max-width:75ch}
+.prod{margin-top:18px}
+.prod li{margin:6px 0;font-size:14px}
+
+dialog{border:1px solid var(--line);border-radius:16px;padding:0;background:var(--surface);color:var(--ink);width:min(520px,92vw)}
+dialog::backdrop{background:rgba(10,12,25,.45)}
+.dlg{padding:20px}
+.dlg h3{margin:0 0 14px;font-size:18px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted);font-weight:600}
+.form .full{grid-column:1/-1}
+.form input,.form select,.form textarea{border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--sunk);font-size:14px;color:var(--ink);font-weight:400}
+.dlg .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:10px;font-size:13.5px;z-index:50;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+
+@media (max-width:1180px){
+  .conv{grid-template-columns:270px minmax(0,1fr) 290px}
+  .grid2{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr 1fr}
+  .step:nth-child(odd){border-left:0}
+  .step{border-top:1px solid var(--line)}
+}
+@media (max-width:920px){
+  .node .lb{display:none}
+  .node.live .lb{display:inline}
+  .conv{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  .panetabs{display:flex;gap:4px;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--line)}
+  .panetabs button{flex:1;border:1px solid var(--line);background:var(--sunk);border-radius:9px;padding:7px;font-size:13px;font-weight:600}
+  .panetabs button[aria-pressed="true"]{background:var(--indigo);border-color:var(--indigo);color:#fff}
+  .conv .pane{display:none;border-left:0}
+  .conv[data-pane="leads"] .p-leads,.conv[data-pane="chat"] .p-chat,.conv[data-pane="insight"] .p-insight{display:flex}
+  .conv[data-pane="chat"] .p-chat{display:grid}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi:nth-child(3){border-left:0}
+  .kpi:nth-child(n+3){border-top:1px solid var(--line)}
+}
+@media (max-width:700px){
+  .app{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
+  .rail{order:2;flex-direction:row;justify-content:space-around;padding:6px 4px}
+  .mark{display:none}
+  .main{order:1}
+  .top{padding:10px 14px;gap:10px}
+  .pipe{margin-left:0;width:100%}
+  .wire{width:8px}
+  .flow{grid-template-columns:1fr}
+  .step{border-left:0 !important}
+  .barrow{grid-template-columns:110px minmax(0,1fr) 28px}
+  .form{grid-template-columns:1fr}
+  .bubble,.receipt{max-width:90%}
+  .receipt{width:90%}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="rail" aria-label="Sections">
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5v-7Z" fill="#1B2366"/><path d="m8.5 10 2.4 2.4L15.5 8" stroke="#E89A00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <button class="navbtn" data-view="conv" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></svg>Chats</button>
+    <button class="navbtn" data-view="desk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Desk</button>
+    <button class="navbtn" data-view="kb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Z"/><path d="M4 19a2 2 0 0 1 2-2h13v4H6a2 2 0 0 1-2-2ZM9 7h6M9 11h4"/></svg>Facts</button>
+    <button class="navbtn" data-view="sys"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="2.5"/><circle cx="19" cy="5" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M7.3 11 16.7 6M7.3 13l9.4 5"/></svg>System</button>
+  </nav>
+
+  <div class="main">
+    <header class="top">
+      <div class="brand">
+        <h1>Bharosa</h1>
+        <p>Turns hesitant NIAT parents into campus visits, in their own language</p>
+      </div>
+      <div class="pipe" aria-label="Live system activity">
+        <span class="node" id="n-inbox"><span class="dot"></span><span class="lb">Lead inbox</span><span class="st"></span></span>
+        <span class="wire"></span>
+        <span class="node" id="n-agent"><span class="dot"></span><span class="lb">Agent</span><span class="st"></span></span>
+        <span class="wire"></span>
+        <span class="node" id="n-insight"><span class="dot"></span><span class="lb">Insight engine</span><span class="st"></span></span>
+        <span class="wire"></span>
+        <span class="node" id="n-desk"><span class="dot"></span><span class="lb">Counsellor desk</span><span class="st"></span></span>
+      </div>
+    </header>
+
+    <!-- CONVERSATIONS -->
+    <section class="view" id="v-conv">
+      <div class="conv" id="conv" data-pane="leads">
+        <div class="panetabs" role="group" aria-label="Panels">
+          <button data-pane="leads" aria-pressed="true">Leads</button>
+          <button data-pane="chat" aria-pressed="false">Chat</button>
+          <button data-pane="insight" aria-pressed="false">Insight</button>
+        </div>
+        <aside class="pane p-leads">
+          <div class="pane-head"><h2>Hesitant leads <span class="count num" id="leadcount"></span></h2>
+            <button class="btn ml" id="newlead" aria-label="Add a lead"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Lead</button></div>
+          <div class="leadlist" id="leadlist"></div>
+        </aside>
+        <section class="pane p-chat chat" id="chat"></section>
+        <aside class="pane p-insight insight" id="insight"></aside>
+      </div>
+    </section>
+
+    <!-- DESK -->
+    <section class="view" id="v-desk" hidden><div class="scroll"><div class="desk" id="desk"></div></div></section>
+
+    <!-- KNOWLEDGE -->
+    <section class="view" id="v-kb" hidden><div class="scroll"><div class="desk kb" id="kbview"></div></div></section>
+
+    <!-- SYSTEM -->
+    <section class="view" id="v-sys" hidden><div class="scroll"><div class="desk" id="sysview"></div></div></section>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <form class="dlg" method="dialog" id="leadform">
+    <h3>Add a lead</h3>
+    <div class="form">
+      <label>Parent's name<input name="parent" required placeholder="Lakshmi Reddy"></label>
+      <label>Relation<select name="relation"><option>Mother</option><option>Father</option><option>Guardian</option></select></label>
+      <label>Student's name<input name="student" required placeholder="Karthik"></label>
+      <label>Language<select name="lang" id="langsel"></select></label>
+      <label>City<input name="city" required placeholder="Warangal"></label>
+      <label>State<input name="state" required placeholder="Telangana"></label>
+      <label class="full">Stream and marks<input name="stream" placeholder="MPC, 82%"></label>
+      <label class="full">What we know so far<textarea name="concern" rows="2" placeholder="Filled the Instagram form, didn't pick up 2 calls. Worried about fees."></textarea></label>
+    </div>
+    <div class="row"><button class="btn" value="cancel" formnovalidate>Cancel</button><button class="btn primary" value="ok">Add lead</button></div>
+  </form>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+"use strict";
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+const inr = n => "₹" + Math.round(n).toLocaleString("en-IN");
+
+const LANGS = {
+  en: {name: "English", native: "English"},
+  te: {name: "Telugu", native: "తెలుగు"},
+  hi: {name: "Hindi", native: "हिन्दी"},
+  ta: {name: "Tamil", native: "தமிழ்"},
+  kn: {name: "Kannada", native: "ಕನ್ನಡ"},
+  ml: {name: "Malayalam", native: "മലയാളം"}
+};
+const STAGES = [["new","New"],["engaged","Engaged"],["warm","Warming up"],["hot","Hot"],["visit_booked","Visit booked"],["handed_off","With counsellor"]];
+const STAGE_LABEL = Object.fromEntries(STAGES);
+const OBJ = {
+  degree_validity: "Degree validity", placements: "Placements real?", fees_roi: "Fees and ROI",
+  campus_safety: "Safety and hostel", distance: "Too far from home", brand_trust: "Never heard of NIAT",
+  competitor: "Comparing other options", exam_plans: "Waiting on EAMCET/JEE", student_interest: "Student unsure", other: "Other"
+};
+
+const DEFAULT_KB = `# NIAT admissions facts
+# DEMO CONTENT. Replace every section with NIAT's verified facts before real use.
+
+## program
+NIAT is a 4-year on-campus upskilling program for students who have completed 12th. Students build industry skills in software development, AI and problem solving alongside their college education. (demo, verify wording)
+
+## degree
+(demo, verify) Students study for a recognised degree through a partner university while doing NIAT's skills curriculum, so they do not give up a degree. A senior counsellor shares the university details.
+
+## placements
+(demo, verify) Placement preparation starts in year 1: projects, internships, mock interviews and recruiter connects. Only quote placement numbers that NIAT has published.
+
+## fees
+(demo) Program fee shown here is a placeholder: 2,50,000 rupees per year. Merit scholarships through the NIAT assessment. EMI options available.
+
+## campus_life
+(demo, verify) Separate hostels for boys and girls with wardens, CCTV and mess food. Parents can visit campus any working day.
+
+## parent_updates
+(demo) Parents get monthly progress updates and online parent-teacher meets.
+
+## admissions
+(demo) Admission through the NIAT assessment and a counselling session. Campus visits Monday to Saturday, 10am to 5pm.`;
+
+const ALUMNI = [
+  {name:"Sai Teja", from:"Karimnagar", state:"Telangana", lang:"te", story:"Parents wanted EAMCET only. Missed a good rank, joined NIAT.", now:"Year 3, internship at a Hyderabad product startup"},
+  {name:"Divya", from:"Warangal", state:"Telangana", lang:"te", story:"First girl in her family to live in a hostel; mother visited campus twice before deciding.", now:"Year 2, leads a coding club"},
+  {name:"Aakash", from:"Kanpur", state:"Uttar Pradesh", lang:"hi", story:"Father compared five colleges on a spreadsheet before choosing.", now:"Year 3, backend internship"},
+  {name:"Priyadharshini", from:"Madurai", state:"Tamil Nadu", lang:"ta", story:"Family worried about cost versus a government college seat.", now:"Year 2, scholarship holder"},
+  {name:"Rakshith", from:"Hassan", state:"Karnataka", lang:"kn", story:"Chose NIAT over a tier-3 engineering seat after a campus visit.", now:"Year 3, AI project with a mentor"},
+  {name:"Anjali", from:"Thrissur", state:"Kerala", lang:"ml", story:"Parents were unsure about moving states at 17.", now:"Year 2, hostel floor representative"},
+  {name:"Omkar", from:"Nashik", state:"Maharashtra", lang:"en", story:"Had never heard of NIAT; father checked alumni on LinkedIn.", now:"Year 4, full-time offer in progress"}
+];
+
+const COSTS = {
+  niat: {label:"NIAT (placeholder fee)", perYear:250000, extras:0, years:4},
+  private_engineering: {label:"Private engineering college", perYear:180000, extras:80000, years:4, note:"Extras = outside coding courses most students add"},
+  govt_college: {label:"Government college + outside courses", perYear:40000, extras:160000, years:4, note:"Extras = coaching and skills courses"},
+  drop_year: {label:"Drop a year for EAMCET/JEE, then engineering", perYear:180000, extras:150000, years:4, note:"Extras = one year of coaching; plus one year delay"}
+};
+
+const SEEDS = [
+  {id:"l-lakshmi", parent:"Lakshmi Reddy", relation:"Mother", student:"Karthik", city:"Warangal", state:"Telangana", lang:"te", stream:"MPC, 82%", source:"Instagram form 9 days ago. Missed 2 calls.", concern:"Karthik has no degree certificate at the end? Relatives say only EAMCET/BTech is safe. Also fees feel high.", personality:"Polite but worried what relatives will say. Short messages."},
+  {id:"l-rajesh", parent:"Rajesh Kumar", relation:"Father", student:"Ananya", city:"Lucknow", state:"Uttar Pradesh", lang:"hi", stream:"PCM, 88%", source:"YouTube lead form. Asked for brochure, then silent.", concern:"Daughter moving to Hyderabad alone. Hostel safety. Also is this better than a Lucknow engineering college.", personality:"Protective, direct, asks pointed questions."},
+  {id:"l-selvi", parent:"Selvi Murugan", relation:"Mother", student:"Arun", city:"Coimbatore", state:"Tamil Nadu", lang:"ta", stream:"Computer Science, 79%", source:"School seminar sign-up. No reply to WhatsApp brochure.", concern:"Government college seat is much cheaper. Is NIAT worth the money? Are placements real or just ads?", personality:"Cost-conscious, practical, a bit suspicious of edtech."},
+  {id:"l-manju", parent:"Manjunath Gowda", relation:"Father", student:"Pranav", city:"Mysuru", state:"Karnataka", lang:"kn", stream:"PCMB, 74%", source:"Counsellor referral. Said 'will think and call back'.", concern:"Pranav wants to wait for CET results. Is NIAT a backup or a real first choice?", personality:"Calm, slow to decide, respects data."},
+  {id:"l-suja", parent:"Suja Thomas", relation:"Mother", student:"Neha", city:"Kochi", state:"Kerala", lang:"ml", stream:"Biology Science, 85%", source:"Facebook ad lead. Opened brochure twice.", concern:"Neha switched from bio to coding interest; is it too late? Kerala to Hyderabad is far.", personality:"Warm, emotional, wants reassurance about her daughter."},
+  {id:"l-sunita", parent:"Sunita Sharma", relation:"Mother", student:"Rohan", city:"Pune", state:"Maharashtra", lang:"en", stream:"PCM, 71%", source:"Google search lead. Downloaded fee sheet.", concern:"Never heard of NIAT before the ad. Is it a real institution? Who else from Pune joined?", personality:"Skeptical, well-read, uses English with some Hindi words."}
+];
+
+/* ---------- Store: shared db with in-memory fallback ---------- */
+const Store = {
+  db: null, leads: new Map(), events: [], kbText: null, threads: new Map(), unsubThread: null, queues: new Map(), listeners: [],
+  emit(kind){ this.persist(); this.listeners.forEach(f => f(kind)); },
+  busy(path){ const q = this.queues.get(path); return !!(q && q.n > 0); },
+  write(path, data){
+    if (!this.db) return Promise.resolve();
+    let q = this.queues.get(path);
+    if (!q){ q = {p: Promise.resolve(), n: 0}; this.queues.set(path, q); }
+    q.n++;
+    q.p = q.p.then(() => this.db.doc(path).set(data)).catch(e => { console.warn("write failed", path, e); if (e && e.code === "invalid_argument") toast("This view can't save changes."); }).finally(() => { q.n--; });
+    return q.p;
+  },
+  async init(){
+    try { this.db = window.claude ? await window.claude.use("db") : null; } catch { this.db = null; }
+    if (!this.db){ this.load(); this.emit("all"); return; }
+    this.db.collection("leads").onSnapshot(s => {
+      const next = new Map();
+      s.docs.forEach(d => { const local = this.leads.get(d.id); next.set(d.id, this.busy("leads/" + d.id) && local ? local : {...d.data(), id: d.id}); });
+      this.leads.forEach((v, k) => { if (!next.has(k) && this.busy("leads/" + k)) next.set(k, v); });
+      this.leads = next; this.emit("leads");
+    }, e => console.warn(e));
+    this.db.collection("events").orderBy("ts", "desc").limit(40).onSnapshot(s => {
+      this.events = s.docs.map(d => ({...d.data(), id: d.id})); this.emit("events");
+    }, e => console.warn(e));
+    this.db.doc("config/kb").onSnapshot(s => {
+      if (!this.busy("config/kb")) this.kbText = s.exists ? (s.data().text || null) : null;
+      this.emit("kb");
+    }, e => console.warn(e));
+  },
+  watchThread(id){
+    if (this.unsubThread){ this.unsubThread(); this.unsubThread = null; }
+    if (!id || !this.db) return;
+    this.unsubThread = this.db.doc("threads/" + id).onSnapshot(s => {
+      if (this.busy("threads/" + id)) return;
+      this.threads.set(id, s.exists ? (s.data().messages || []) : []);
+      this.emit("thread");
+    }, e => console.warn(e));
+  },
+  load(){
+    try {
+      const raw = localStorage.getItem("bharosa:v1"); if (!raw) return;
+      const o = JSON.parse(raw);
+      this.leads = new Map((o.leads || []).map(l => [l.id, l]));
+      this.threads = new Map(Object.entries(o.threads || {}));
+      this.events = o.events || []; this.kbText = o.kb || null;
+    } catch (e) { console.warn("load failed", e); }
+  },
+  persist(){
+    if (this.db) return;
+    clearTimeout(this._pt);
+    this._pt = setTimeout(() => {
+      try { localStorage.setItem("bharosa:v1", JSON.stringify({leads: [...this.leads.values()], threads: Object.fromEntries(this.threads), events: this.events, kb: this.kbText})); } catch (e) { console.warn("save failed", e); }
+    }, 150);
+  },
+  lead(id){ return this.leads.get(id); },
+  allLeads(){ return [...this.leads.values()].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)); },
+  thread(id){ return this.threads.get(id) || []; },
+  kb(){ return this.kbText || DEFAULT_KB; },
+  saveLead(id, patch){
+    const next = {...(this.leads.get(id) || {}), ...patch, id, updatedAt: Date.now()};
+    this.leads.set(id, next); this.emit("leads");
+    const {id: _, ...body} = next;
+    return this.write("leads/" + id, body);
+  },
+  setThread(id, arr){ this.threads.set(id, arr); this.emit("thread"); return this.write("threads/" + id, {messages: arr}); },
+  appendMsg(id, msg){ return this.setThread(id, [...this.thread(id), msg]); },
+  updateMsg(id, msgId, patch){ return this.setThread(id, this.thread(id).map(m => m.id === msgId ? {...m, ...patch} : m)); },
+  addEvent(ev){
+    const e = {...ev, ts: Date.now()}; const id = e.ts.toString(36) + Math.random().toString(36).slice(2, 5);
+    this.events = [{...e, id}, ...this.events].slice(0, 40); this.emit("events");
+    return this.write("events/" + id, e);
+  },
+  saveKb(text){ this.kbText = text; this.emit("kb"); return this.write("config/kb", {text, ts: Date.now()}); }
+};
+
+/* ---------- Server-backed Claude (used when hosted outside claude.ai) ----------
+   Same interface as the in-Claude "sample" capability, but calls /api/claude,
+   a serverless function that holds the Anthropic API key. Runs the tool loop here. */
+function makeServerSample(){
+  async function call(body, signal){
+    let res;
+    try { res = await fetch("/api/claude", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body), signal}); }
+    catch (e) { throw {code: e && e.name === "AbortError" ? "cancelled" : "upstream_error", message: String(e)}; }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw {code: res.status === 429 ? "rate_limited" : "upstream_error", message: data.error || res.statusText};
+    return data;
+  }
+  async function sampleFn(input, opts = {}){
+    const signal = opts.signal;
+    if (signal && signal.aborted) throw {code: "cancelled", message: "aborted"};
+    let messages = typeof input === "string" ? [{role: "user", content: input}] : input.map(m => ({role: m.role, content: m.content}));
+    // merge consecutive same-role turns (the API requires alternation)
+    messages = messages.reduce((acc, m) => { const last = acc[acc.length - 1]; if (last && last.role === m.role) last.content += "\n\n" + m.content; else acc.push({...m}); return acc; }, []);
+    const tools = (opts.tools || []).map(t => ({name: t.name, description: t.description, input_schema: t.inputSchema || {type: "object", properties: {}}}));
+    let all = "";
+    for (let round = 0; round < 6; round++){
+      const data = await call({tier: opts.modelTier || "default", messages, tools: tools.length ? tools : undefined, json: !!opts._json}, signal);
+      const blocks = data.content || [];
+      const text = blocks.filter(b => b.type === "text").map(b => b.text).join("");
+      if (text){ all = all ? all + "\n\n" + text : text; if (opts.onText) opts.onText({text: all, delta: text}); }
+      const uses = blocks.filter(b => b.type === "tool_use");
+      if (!uses.length || data.stop_reason !== "tool_use") break;
+      messages.push({role: "assistant", content: blocks});
+      const results = [];
+      for (const u of uses){
+        const t = (opts.tools || []).find(x => x.name === u.name);
+        let out, isErr = false;
+        try { out = t ? await t.execute(u.input || {}, {signal: signal || new AbortController().signal}) : "Unknown tool"; }
+        catch (e) { out = "Error: " + (e && e.message || e); isErr = true; }
+        results.push({type: "tool_result", tool_use_id: u.id, content: typeof out === "string" ? out : JSON.stringify(out), is_error: isErr});
+      }
+      messages.push({role: "user", content: results});
+      if (signal && signal.aborted) throw {code: "cancelled", message: "aborted", text: all};
+    }
+    if (!all.trim()) throw {code: "empty_completion", message: "No text"};
+    return {text: all, truncated: false, modelTierApplied: opts.modelTier || "default"};
+  }
+  sampleFn.json = async (input, opts = {}) => {
+    const r = await sampleFn(input, {...opts, _json: true});
+    const t = r.text.trim();
+    const tries = [t, (t.match(/```(?:json)?\s*([\s\S]*?)```/) || [])[1], t.slice(Math.min(...["{","["].map(c => t.indexOf(c)).filter(i => i >= 0)), Math.max(t.lastIndexOf("}"), t.lastIndexOf("]")) + 1)];
+    for (const c of tries){ if (!c) continue; try { return JSON.parse(c); } catch {} }
+    throw {code: "invalid_json", message: "Could not parse JSON", text: r.text};
+  };
+  sampleFn.limits = async () => ({maxPromptBytes: 262144, tools: {maxCount: 16}});
+  return sampleFn;
+}
+
+/* ---------- UI state ---------- */
+const ui = {view: "conv", sel: null, pane: "leads", streaming: null, busy: new Set(), auto: null, speed: "quick", ctl: new Map(), pending: new Set()};
+let sample = null, sampleChecked = false;
+
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("on"), 3200); }
+
+const pipeTimers = {};
+function pipe(node, label, hold){
+  const el = $("#n-" + node); if (!el) return;
+  el.classList.add("live"); el.querySelector(".st").textContent = label || "";
+  clearTimeout(pipeTimers[node]);
+  if (!hold) pipeTimers[node] = setTimeout(() => el.classList.remove("live"), 1800);
+}
+function pipeOff(node){ const el = $("#n-" + node); if (el) el.classList.remove("live"); }
+
+function codeCopy(code){
+  return ({
+    not_granted: "Claude access was declined for this page, so the live agent is off.",
+    sampling_disabled: "Claude isn't available on this account.",
+    rate_limited: "Too many requests right now. Wait a moment and try again.",
+    session_expired: "Sign in to Claude again to continue.",
+    refused: "Claude declined that message. Try rephrasing it.",
+    tools_unavailable: "This view can't run agent tools. Open the artifact in the Claude app.",
+    cancelled: ""
+  })[code] || "The agent couldn't reply. Try again.";
+}
+function clean(t){ return String(t || "").replace(/^\s*(Parent|NIAT AGENT|Agent|Bharosa)\s*:\s*/i, "").replace(/\*\*/g, "").trim(); }
+
+/* ---------- Knowledge parsing ---------- */
+function kbSections(){
+  const out = {};
+  Store.kb().split(/^##\s+/m).slice(1).forEach(block => {
+    const nl = block.indexOf("\n"); const key = block.slice(0, nl < 0 ? undefined : nl).trim().toLowerCase();
+    out[key] = nl < 0 ? "" : block.slice(nl + 1).trim();
+  });
+  return out;
+}
+function kbProgramLine(){ return (kbSections().program || "NIAT is a 4-year on-campus upskilling program for students who have completed 12th.").split("\n")[0]; }
+
+/* ---------- Agent tools ---------- */
+function makeTools(leadId, markCut){
+  const receipt = (tool, title, detail, tag) => Store.appendMsg(leadId, {id: uid(), role: "tool", tool, title, detail, tag: tag || "", ts: Date.now()});
+  return [
+    {name: "lookup_facts",
+     description: "Look up NIAT facts from the admissions knowledge base. Returns the text for one topic. Use before answering any factual question about NIAT.",
+     inputSchema: {type: "object", properties: {topic: {type: "string", enum: ["program","degree","placements","fees","campus_life","parent_updates","admissions"]}}, required: ["topic"]},
+     execute: (input) => {
+       markCut(); const topic = String(input.topic || "program").toLowerCase(); const secs = kbSections();
+       const text = secs[topic] || "No verified fact on file for this topic. Offer to have a senior counsellor confirm.";
+       receipt("lookup_facts", "Checked " + topic.replace(/_/g, " ") + " in the knowledge base", text.slice(0, 150) + (text.length > 150 ? "…" : ""), /demo/i.test(text) ? "demo fact" : "verified");
+       pipe("agent", "Looking up " + topic, true);
+       return {topic, text};
+     }},
+    {name: "find_similar_students",
+     description: "Find current NIAT students from the parent's own state or language, to share a relatable story. Returns up to 2 short profiles.",
+     inputSchema: {type: "object", properties: {state: {type: "string"}, language: {type: "string", description: "language code like te, hi, ta, kn, ml, en"}}},
+     execute: (input) => {
+       markCut(); const lead = Store.lead(leadId) || {};
+       const st = String(input.state || lead.state || "").toLowerCase(); const lg = String(input.language || lead.lang || "");
+       let list = ALUMNI.filter(a => a.state.toLowerCase() === st);
+       if (list.length < 2) list = list.concat(ALUMNI.filter(a => a.lang === lg && !list.includes(a)));
+       if (!list.length) list = ALUMNI.slice(0, 2);
+       list = list.slice(0, 2);
+       receipt("find_similar_students", "Found " + list.length + " student" + (list.length > 1 ? "s" : "") + " from " + (lead.state || "nearby"), list.map(a => a.name + ", " + a.from + ": " + a.now).join(" · "), "demo profiles");
+       pipe("agent", "Finding peers", true);
+       return {students: list, note: "Demo profiles. Use first names only. Offer to connect the parent with the student's family through the counsellor."};
+     }},
+    {name: "cost_comparison",
+     description: "Compare the 4-year total cost of NIAT with an alternative the parent is considering. Returns totals in rupees and notes.",
+     inputSchema: {type: "object", properties: {alternative: {type: "string", enum: ["private_engineering","govt_college","drop_year"]}}, required: ["alternative"]},
+     execute: (input) => {
+       markCut(); const alt = COSTS[String(input.alternative)] || COSTS.private_engineering; const n = COSTS.niat;
+       const nT = n.perYear * n.years + n.extras, aT = alt.perYear * alt.years + alt.extras;
+       receipt("cost_comparison", "Compared 4-year cost vs " + alt.label.toLowerCase(), "NIAT " + inr(nT) + " vs " + inr(aT) + (alt.note ? ". " + alt.note : ""), "placeholder fees");
+       pipe("agent", "Comparing costs", true);
+       return {niat_4yr_total: nT, alternative: alt.label, alternative_4yr_total: aT, difference: nT - aT, notes: alt.note || "", caution: "Placeholder numbers. Say exact fee and scholarship are confirmed by a counsellor."};
+     }},
+    {name: "book_campus_visit",
+     description: "Book a campus visit when the parent agrees to visit. Returns the confirmation.",
+     inputSchema: {type: "object", properties: {campus: {type: "string"}, day: {type: "string", description: "e.g. 'this Saturday 11am'"}}, required: ["day"]},
+     execute: (input) => {
+       markCut(); const lead = Store.lead(leadId) || {}; const campus = String(input.campus || "Hyderabad campus"); const day = String(input.day);
+       Store.saveLead(leadId, {stage: "visit_booked", visit: {campus, day}});
+       Store.addEvent({type: "visit", leadId, text: lead.parent + " booked a campus visit: " + campus + ", " + day});
+       receipt("book_campus_visit", "Campus visit booked", campus + ", " + day + ". Counsellor notified.", "action");
+       pipe("desk", "Visit booked");
+       return {confirmed: true, campus, day, reminder: "WhatsApp reminder the day before"};
+     }},
+    {name: "handoff_to_counsellor",
+     description: "Hand the parent to a senior human counsellor: when they ask for a call, want to pay, are upset, or ask something not in the knowledge base.",
+     inputSchema: {type: "object", properties: {reason: {type: "string"}, urgency: {type: "string", enum: ["normal","high"]}}, required: ["reason"]},
+     execute: (input) => {
+       markCut(); const lead = Store.lead(leadId) || {}; const reason = String(input.reason || "Parent asked for a call"); const urgency = input.urgency === "high" ? "high" : "normal";
+       Store.saveLead(leadId, {stage: lead.stage === "visit_booked" ? "visit_booked" : "handed_off", handoff: {reason, urgency, ts: Date.now()}});
+       Store.addEvent({type: "handoff", leadId, text: lead.parent + " handed to counsellor (" + urgency + "): " + reason});
+       receipt("handoff_to_counsellor", "Handed to a senior counsellor", reason, urgency === "high" ? "high priority" : "action");
+       pipe("desk", "Handoff");
+       return {queued: true, expected_callback: urgency === "high" ? "within 30 minutes" : "today"};
+     }}
+  ];
+}
+
+function agentRules(lead){
+  const L = LANGS[lead.lang] || LANGS.en;
+  return `You are Bharosa, NIAT's WhatsApp admissions guide. ${kbProgramLine()}
+You are messaging a parent who enquired and then went quiet. Your only job: earn their trust and move them one step forward, ideally a campus visit or a call with a senior counsellor.
+
+Parent: ${lead.parent} (${(lead.relation || "parent").toLowerCase()} of ${lead.student}), ${lead.city}, ${lead.state}.
+Student: ${lead.stream || "details not shared"}. How they came in: ${lead.source || "enquiry form"}.
+
+Write ONLY in ${L.name}${lead.lang === "en" ? " (simple Indian English)" : ` in native ${L.native} script; mixing common English words like "placement", "hostel", "fees" is natural`}.
+Rules:
+- WhatsApp length: 2 to 4 short sentences, under 70 words. No markdown, no lists, at most one emoji.
+- Address them respectfully the way people do in ${L.name} (for example "garu" in Telugu, "ji" in Hindi).
+- Answer the worry they actually raised first. Never argue or pressure.
+- Facts: use ONLY what your tools return. Never invent numbers, company names, rankings or promises. If a fact is marked demo or missing, say a senior counsellor will confirm the exact detail.
+- When they raise fees, placements, degree, safety, or compare options, call the matching tool before replying. When trust is low, use find_similar_students to share a student from their region (first name only).
+- When they agree to visit, call book_campus_visit. When they ask for a call, want to pay, or are upset, call handoff_to_counsellor.
+- Write no text before or between tool calls. Your final message is sent to the parent exactly as written.`;
+}
+
+/* ---------- AI flows ---------- */
+function linkSignal(outer, ctl){ if (outer){ if (outer.aborted) ctl.abort(); else outer.addEventListener("abort", () => ctl.abort(), {once: true}); } }
+
+async function agentTurn(leadId, opts = {}){
+  if (!sample){ toast("The AI agent is offline. Check the /api/claude function."); return false; }
+  const lead = Store.lead(leadId); if (!lead) return false;
+  const ctl = new AbortController(); linkSignal(opts.signal, ctl); ui.ctl.set(leadId, ctl);
+  ui.busy.add(leadId); ui.streaming = {leadId, text: ""}; render("thread");
+  pipe("agent", opts.opening ? "Writing first message" : "Replying", true);
+  const turns = [{role: "user", content: agentRules(lead)}];
+  Store.thread(leadId).forEach(m => {
+    if (m.role === "parent") turns.push({role: "user", content: "Parent: " + m.text});
+    else if (m.role === "agent") turns.push({role: "assistant", content: m.text});
+  });
+  if (opts.opening || turns[turns.length - 1].role !== "user"){
+    turns.push({role: "user", content: `(No reply from the parent yet. Write your first WhatsApp message: greet ${lead.parent} warmly, mention their enquiry about NIAT for ${lead.student}, and ask one easy question about what is on their mind. Do not call tools for this first message.)`});
+  }
+  let latest = "", cut = 0, ok = false;
+  try {
+    const res = await sample(turns, {
+      tools: makeTools(leadId, () => { cut = latest.length; }),
+      cache: false, modelTier: ui.speed, signal: ctl.signal,
+      onText: ({text}) => { latest = text; if (ui.streaming) { ui.streaming.text = clean(text.slice(cut)); render("thread"); } }
+    });
+    const reply = clean(res.text.slice(cut)) || clean(res.text);
+    ui.streaming = null;
+    await Store.appendMsg(leadId, {id: uid(), role: "agent", text: reply, ts: Date.now()});
+    const cur = Store.lead(leadId);
+    if (cur && cur.stage === "new") Store.saveLead(leadId, {stage: "engaged"});
+    if (opts.opening) Store.addEvent({type: "outreach", leadId, text: "Agent re-opened the conversation with " + lead.parent + " in " + (LANGS[lead.lang] || LANGS.en).name});
+    ok = true;
+  } catch (e) {
+    ui.streaming = null;
+    if (e && e.text && e.code !== "refused" && e.code !== "cancelled") await Store.appendMsg(leadId, {id: uid(), role: "agent", text: clean(e.text) + " …", ts: Date.now(), partial: true});
+    if (e && e.code === "not_granted") { sample = null; render("all"); }
+    const msg = codeCopy(e && e.code); if (msg) toast(msg);
+  } finally {
+    ui.busy.delete(leadId); ui.ctl.delete(leadId); ui.streaming = null; pipeOff("agent"); render("thread");
+  }
+  if (ok && Store.thread(leadId).some(m => m.role === "parent")) await insightTurn(leadId, ctl.signal);
+  return ok;
+}
+
+async function insightTurn(leadId, signal){
+  if (!sample) return;
+  const lead = Store.lead(leadId); if (!lead) return;
+  const msgs = Store.thread(leadId).filter(m => m.role !== "tool").slice(-12);
+  const transcript = msgs.map(m => (m.role === "parent" ? "PARENT: " : "NIAT AGENT: ") + m.text).join("\n");
+  pipe("insight", "Scoring", true); ui.pending.add(leadId); render("insight");
+  const prompt = `You analyse WhatsApp admissions conversations between NIAT (a 4-year upskilling program after 12th) and a parent. The conversation may be in an Indian language; write your analysis in English.
+Parent: ${lead.parent}, ${lead.relation} of ${lead.student}, ${lead.city}, ${lead.state}. Current stage: ${lead.stage}.
+
+Conversation:
+${transcript}
+
+Reply with only a JSON object:
+{"objections": [ids from this list that the parent raised: ${Object.keys(OBJ).join(", ")}],
+ "primary_objection": one id from that list or null,
+ "sentiment": "negative" | "skeptical" | "neutral" | "warming" | "positive",
+ "readiness": integer 0-100 (likelihood the family visits campus or pays in the next 14 days),
+ "stage": "engaged" | "warm" | "hot",
+ "next_best_action": one sentence for the human counsellor,
+ "brief": 2 sentences a counsellor reads in 10 seconds before calling: who they are, the real worry, what will close them}`;
+  try {
+    const r = await sample.json(prompt, {modelTier: "quick", cache: false, signal});
+    const objections = Array.isArray(r.objections) ? r.objections.filter(o => OBJ[o]) : [];
+    const readiness = clamp(Math.round(Number(r.readiness) || 0), 0, 100);
+    let stage = ["engaged","warm","hot"].includes(r.stage) ? r.stage : lead.stage;
+    const fixed = ["visit_booked","handed_off"].includes(lead.stage);
+    if (fixed) stage = lead.stage;
+    const wasHot = ["hot","visit_booked","handed_off"].includes(lead.stage);
+    await Store.saveLead(leadId, {
+      objections: [...new Set([...(lead.objections || []), ...objections])],
+      primary: OBJ[r.primary_objection] ? r.primary_objection : (objections[0] || lead.primary || null),
+      sentiment: String(r.sentiment || "neutral"), readiness, stage,
+      nba: String(r.next_best_action || ""), brief: String(r.brief || ""), scoredAt: Date.now()
+    });
+    if (!wasHot && stage === "hot") Store.addEvent({type: "hot", leadId, text: lead.parent + " turned hot (" + readiness + "/100)"});
+    pipe("desk", "Queue updated");
+  } catch (e) {
+    if (e && e.code !== "cancelled") console.warn("insight", e);
+  } finally { ui.pending.delete(leadId); pipeOff("insight"); render("insight"); }
+}
+
+async function parentSim(leadId, signal){
+  const lead = Store.lead(leadId); const L = LANGS[lead.lang] || LANGS.en;
+  const transcript = Store.thread(leadId).filter(m => m.role !== "tool").slice(-10).map(m => (m.role === "parent" ? "YOU: " : "NIAT: ") + m.text).join("\n");
+  pipe("inbox", "Parent typing", true);
+  const prompt = `Role-play a real Indian parent replying on WhatsApp to an admissions guide from NIAT. Stay in character.
+You are ${lead.parent}, ${lead.relation} of ${lead.student}, from ${lead.city}, ${lead.state}. Personality: ${lead.personality || "polite but cautious"}.
+Your private worries, reveal them one at a time across messages: ${lead.concern || "fees, placements, whether this is genuine"}.
+Write ONLY your next message in ${L.name}${lead.lang === "en" ? "" : " using " + L.native + " script, with light natural English mixing"}. 1 to 3 short sentences, under 35 words. No quotes, no name prefix.
+If the guide has answered your worries well in two or more messages, warm up: ask about visiting the campus or ask for a phone call. If answers feel vague or salesy, push back.
+
+Conversation so far:
+${transcript || "(The guide has not written yet.)"}`;
+  try {
+    const r = await sample(prompt, {modelTier: "quick", cache: false, signal});
+    await Store.appendMsg(leadId, {id: uid(), role: "parent", text: clean(r.text), ts: Date.now(), sim: true});
+    Store.saveLead(leadId, {lastParentAt: Date.now()});
+    return true;
+  } catch (e) {
+    const m = codeCopy(e && e.code); if (m) toast(m); return false;
+  } finally { pipeOff("inbox"); }
+}
+
+async function autopilot(leadId){
+  if (ui.auto){ ui.auto.abort(); return; }
+  if (!sample){ toast("The AI agent is offline. Check the /api/claude function."); return; }
+  const ctl = new AbortController(); ui.auto = ctl; render("thread");
+  try {
+    if (!Store.thread(leadId).some(m => m.role === "agent")){
+      if (!await agentTurn(leadId, {opening: true, signal: ctl.signal})) return;
+    }
+    for (let i = 0; i < 4 && !ctl.signal.aborted; i++){
+      const l = Store.lead(leadId);
+      if (!l || ["visit_booked","handed_off"].includes(l.stage)) break;
+      if (!await parentSim(leadId, ctl.signal) || ctl.signal.aborted) break;
+      if (!await agentTurn(leadId, {signal: ctl.signal})) break;
+    }
+  } finally { ui.auto = null; render("thread"); }
+}
+
+async function translate(leadId, msg){
+  if (!sample) return toast("The AI agent is offline. Check the /api/claude function.");
+  Store.updateMsg(leadId, msg.id, {gloss: "Translating…"});
+  try {
+    const r = await sample("Translate this WhatsApp message into natural English. Reply with only the translation.\n\n" + msg.text, {modelTier: "quick"});
+    Store.updateMsg(leadId, msg.id, {gloss: r.text.trim()});
+  } catch (e) { Store.updateMsg(leadId, msg.id, {gloss: ""}); const m = codeCopy(e && e.code); if (m) toast(m); }
+}
+
+/* ---------- Rendering ---------- */
+let raf = 0; const dirty = new Set();
+function render(kind){ dirty.add(kind || "all"); if (!raf) raf = requestAnimationFrame(flush); }
+function flush(){
+  raf = 0; const all = dirty.has("all"); const d = new Set(dirty); dirty.clear();
+  if (ui.view === "conv"){
+    if (all || d.has("leads")) renderLeads();
+    if (all || d.has("leads") || d.has("thread")) renderChat();
+    if (all || d.has("leads") || d.has("insight")) renderInsight();
+  }
+  if (ui.view === "desk" && (all || d.has("leads") || d.has("events"))) renderDesk();
+  if (ui.view === "kb" && (all || d.has("kb"))) renderKb();
+  if (ui.view === "sys" && all) renderSys();
+}
+
+function stagePill(s){ return `<span class="pill ${esc(s)}">${esc(STAGE_LABEL[s] || "New")}</span>`; }
+function initials(n){ return String(n || "?").split(/\s+/).map(w => w[0]).slice(0, 2).join("").toUpperCase(); }
+function ago(ts){ if (!ts) return ""; const s = (Date.now() - ts) / 1000; if (s < 60) return "just now"; if (s < 3600) return Math.floor(s / 60) + "m ago"; if (s < 86400) return Math.floor(s / 3600) + "h ago"; return Math.floor(s / 86400) + "d ago"; }
+function hhmm(ts){ return new Date(ts).toLocaleTimeString([], {hour: "numeric", minute: "2-digit"}); }
+
+function renderLeads(){
+  const leads = Store.allLeads();
+  $("#leadcount").textContent = leads.length ? "(" + leads.length + ")" : "";
+  const box = $("#leadlist");
+  if (!leads.length){
+    box.innerHTML = `<div class="empty"><strong>No leads yet</strong>Load six hesitant parents from Telangana, UP, Tamil Nadu, Karnataka, Kerala and Maharashtra, or add your own.<br><button class="btn primary" id="seed">Load demo leads</button></div>`;
+    $("#seed").onclick = seedLeads; return;
+  }
+  if (!ui.sel || !Store.lead(ui.sel)) selectLead(leads[0].id, true);
+  box.innerHTML = leads.map(l => `
+    <button class="lead" data-id="${esc(l.id)}" aria-current="${l.id === ui.sel}">
+      <div class="r1"><span class="nm">${esc(l.parent)}</span><span class="lg">${esc((LANGS[l.lang] || LANGS.en).native)}</span></div>
+      <div class="r2">${esc(l.relation)} of ${esc(l.student)} · ${esc(l.city)}</div>
+      <div class="r3"><span class="meter" aria-label="Readiness ${l.readiness || 0} of 100"><i style="width:${clamp(l.readiness || 0, 0, 100)}%"></i></span><span class="num" style="font-size:12px;font-weight:700">${l.readiness || 0}</span>${stagePill(l.stage)}</div>
+      ${l.primary ? `<div class="obj">${esc(OBJ[l.primary] || "")}</div>` : ""}
+    </button>`).join("");
+  box.querySelectorAll(".lead").forEach(b => b.onclick = () => { selectLead(b.dataset.id); setPane("chat"); });
+}
+
+function receiptIcon(tool){
+  const p = {
+    lookup_facts: '<path d="M4 5h16M4 12h10M4 19h7"/><circle cx="18" cy="17" r="3"/><path d="m20.2 19.2 1.8 1.8"/>',
+    find_similar_students: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 14.2A5 5 0 0 1 22 19"/>',
+    cost_comparison: '<path d="M7 4h10M7 9h10M7 4c5 0 5 5 0 5l8 11"/>',
+    book_campus_visit: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 15l2 2 4-4"/>',
+    handoff_to_counsellor: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>'
+  }[tool] || '<circle cx="12" cy="12" r="8"/>';
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+}
+
+function renderChat(){
+  const box = $("#chat"); const lead = ui.sel && Store.lead(ui.sel);
+  if (!lead){ box.innerHTML = `<div class="empty" style="grid-row:1/-1;align-self:center;text-align:center"><strong>Pick a lead to start</strong>The agent re-opens the conversation in the parent's own language.</div>`; return; }
+  const msgsEl = box.querySelector(".msgs");
+  const atBottom = !msgsEl || msgsEl.scrollHeight - msgsEl.scrollTop - msgsEl.clientHeight < 80;
+  const prevScroll = msgsEl ? msgsEl.scrollTop : 0;
+  const draft = box.querySelector("textarea") ? box.querySelector("textarea").value : "";
+  const hadFocus = document.activeElement && document.activeElement.id === "compose";
+  const busy = ui.busy.has(lead.id); const auto = !!ui.auto;
+  const thread = Store.thread(lead.id);
+  const L = LANGS[lead.lang] || LANGS.en;
+  const items = thread.map(m => {
+    if (m.role === "tool") return `<div class="receipt"><div class="h">${receiptIcon(m.tool)}<span>${esc(m.title)}</span><span class="tag">${esc(m.tag)}</span></div><div class="b">${esc(m.detail)}</div></div>`;
+    const showGloss = lead.lang !== "en";
+    return `<div class="bubble ${m.role === "parent" ? "parent" : "agent"}">${esc(m.text)}${m.gloss ? `<span class="gloss">${esc(m.gloss)}</span>` : ""}<div class="meta">${m.sim ? "<span>simulated parent</span>" : ""}${showGloss && !m.gloss ? `<button class="gl" data-gloss="${esc(m.id)}">See in English</button>` : ""}<span>${hhmm(m.ts)}</span></div></div>`;
+  }).join("");
+  const streaming = ui.streaming && ui.streaming.leadId === lead.id
+    ? `<div class="bubble agent streaming">${ui.streaming.text ? esc(ui.streaming.text) : '<span class="thinking" aria-label="Agent is thinking"><i></i><i></i><i></i></span>'}</div>` : "";
+  const intro = `<div class="daynote">WhatsApp sandbox. ${esc(lead.source || "")}</div>`;
+  const emptyNote = !thread.length && !streaming ? `<div class="daynote">No conversation yet. Start outreach, or press Simulate to watch the agent handle a skeptical parent end to end.</div>` : "";
+
+  box.innerHTML = `
+    <div class="pane-head chathead">
+      <span class="avatar">${esc(initials(lead.parent))}</span>
+      <div class="who"><div class="n">${esc(lead.parent)}</div><div class="s">${esc(lead.relation)} of ${esc(lead.student)} · ${esc(lead.city)}, ${esc(lead.state)} · ${esc(lead.stream || "")}</div></div>
+      <div class="ctl">
+        <label class="sr" style="position:absolute;left:-9999px" for="langpick">Language</label>
+        <select class="sel" id="langpick" title="Conversation language">${Object.entries(LANGS).map(([k, v]) => `<option value="${k}" ${k === lead.lang ? "selected" : ""}>${v.native}</option>`).join("")}</select>
+        <select class="sel" id="speed" title="Agent model"><option value="quick" ${ui.speed === "quick" ? "selected" : ""}>Fast agent</option><option value="default" ${ui.speed === "default" ? "selected" : ""}>Deep agent</option></select>
+        ${thread.some(m => m.role === "agent") ? "" : `<button class="btn primary" id="start" ${busy || auto || !sample ? "disabled" : ""}>Start outreach</button>`}
+        <button class="btn gold" id="auto" ${(!sample || (busy && !auto)) ? "disabled" : ""}>${auto ? "Stop" : "Simulate parent"}</button>
+        <button class="btn" id="reset" title="Clear this conversation" aria-label="Reset conversation" ${busy || auto ? "disabled" : ""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+      </div>
+    </div>
+    <div class="msgs" id="msgs">${intro}${items}${streaming}${emptyNote}</div>
+    <div>
+      ${sampleChecked && !sample ? `<p class="notice">The AI agent is offline. Check that /api/claude is deployed and ANTHROPIC_API_KEY is set.</p>` : ""}
+      <form class="composer" id="composer">
+        <textarea id="compose" rows="1" placeholder="Reply as ${esc(lead.parent)} (${esc(L.name)} or English)…" ${!sample || auto ? "disabled" : ""}></textarea>
+        <button class="btn primary" type="submit" ${!sample || busy || auto ? "disabled" : ""} aria-label="Send as parent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/></svg>Send</button>
+      </form>
+      <div class="composer hint">You're typing as the parent. In production these messages arrive from WhatsApp.</div>
+    </div>`;
+  const ta = $("#compose"); ta.value = draft; if (hadFocus) { ta.focus(); ta.setSelectionRange(draft.length, draft.length); }
+  ta.oninput = () => { ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 120) + "px"; };
+  ta.onkeydown = e => { if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); $("#composer").requestSubmit(); } };
+  $("#composer").onsubmit = async e => {
+    e.preventDefault(); const text = ta.value.trim(); if (!text || ui.busy.has(lead.id)) return;
+    ta.value = ""; pipe("inbox", "New message");
+    await Store.appendMsg(lead.id, {id: uid(), role: "parent", text, ts: Date.now()});
+    Store.saveLead(lead.id, {lastParentAt: Date.now()});
+    agentTurn(lead.id);
+  };
+  const st = $("#start"); if (st) st.onclick = () => agentTurn(lead.id, {opening: true});
+  $("#auto").onclick = () => autopilot(lead.id);
+  $("#speed").onchange = e => { ui.speed = e.target.value; };
+  $("#langpick").onchange = e => { Store.saveLead(lead.id, {lang: e.target.value}); toast("The agent now replies in " + LANGS[e.target.value].name + "."); };
+  $("#reset").onclick = () => {
+    if (!confirm("Clear this conversation and reset " + lead.parent + "'s score?")) return;
+    Store.setThread(lead.id, []);
+    Store.saveLead(lead.id, {stage: "new", readiness: 15, objections: [], primary: null, sentiment: "", nba: "", brief: "", visit: null, handoff: null, contacted: false});
+  };
+  box.querySelectorAll("[data-gloss]").forEach(b => b.onclick = () => { const m = thread.find(x => x.id === b.dataset.gloss); if (m) translate(lead.id, m); });
+  const ms = $("#msgs"); if (atBottom) ms.scrollTop = ms.scrollHeight; else ms.scrollTop = prevScroll;
+}
+
+function gaugeSvg(v){
+  const len = Math.PI * 54; const off = len * (1 - clamp(v, 0, 100) / 100);
+  return `<svg viewBox="0 0 128 72" aria-hidden="true"><path d="M10 66 A54 54 0 0 1 118 66" fill="none" stroke="var(--line)" stroke-width="10" stroke-linecap="round"/><path d="M10 66 A54 54 0 0 1 118 66" fill="none" stroke="var(--marigold)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" style="transition:stroke-dashoffset .8s"/></svg>`;
+}
+
+function renderInsight(){
+  const box = $("#insight"); const lead = ui.sel && Store.lead(ui.sel);
+  if (!lead){ box.innerHTML = ""; return; }
+  const scoring = ui.pending.has(lead.id);
+  const objs = lead.objections || [];
+  box.innerHTML = `
+    <div class="pane-head"><h2>Insight engine</h2><span class="ml" style="font-size:12px;color:var(--muted)">${scoring ? "Scoring…" : lead.scoredAt ? "Scored " + ago(lead.scoredAt) : "Scores after each reply"}</span></div>
+    <div class="ins-sec">
+      <h3>Readiness to visit or pay</h3>
+      <div class="gauge">${gaugeSvg(lead.readiness || 0)}<div><div class="big num">${lead.readiness || 0}</div><div class="lbl">out of 100</div><div style="margin-top:6px">${stagePill(lead.stage)}</div></div></div>
+      <dl class="kv" style="margin-top:12px"><dt>Mood</dt><dd><span class="sent ${esc(lead.sentiment || "")}">${esc(lead.sentiment || "Not scored yet")}</span></dd><dt>Language</dt><dd>${esc((LANGS[lead.lang] || LANGS.en).name)}</dd>${lead.visit ? `<dt>Visit</dt><dd>${esc(lead.visit.campus)}, ${esc(lead.visit.day)}</dd>` : ""}</dl>
+    </div>
+    <div class="ins-sec"><h3>Objections heard</h3>${objs.length ? `<div class="chips">${objs.map(o => `<span class="chip ${o === lead.primary ? "primary" : ""}">${esc(OBJ[o] || o)}</span>`).join("")}</div>` : `<div style="color:var(--muted);font-size:13.5px">None yet. They show up as the parent talks.</div>`}</div>
+    <div class="ins-sec"><h3>Next best action for the counsellor</h3><div class="nba">${esc(lead.nba || "Start the conversation to get a recommendation.")}</div></div>
+    <div class="ins-sec"><h3>10-second brief</h3><div class="brief">${esc(lead.brief || "Written automatically once the parent replies.")}</div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn" id="handoff" ${lead.stage === "handed_off" ? "disabled" : ""}>${lead.stage === "handed_off" ? "With counsellor" : "Send to counsellor"}</button>
+        <button class="btn" id="todesk">Open desk</button>
+      </div></div>`;
+  $("#handoff").onclick = () => {
+    Store.saveLead(lead.id, {stage: "handed_off", handoff: {reason: "Manually escalated from insight panel", urgency: "normal", ts: Date.now()}});
+    Store.addEvent({type: "handoff", leadId: lead.id, text: lead.parent + " sent to counsellor manually"});
+    pipe("desk", "Handoff");
+  };
+  $("#todesk").onclick = () => setView("desk");
+}
+
+function renderDesk(){
+  const leads = Store.allLeads(); const box = $("#desk");
+  const visits = leads.filter(l => l.stage === "visit_booked").length;
+  const hand = leads.filter(l => l.stage === "handed_off").length;
+  const avg = leads.length ? Math.round(leads.reduce((s, l) => s + (l.readiness || 0), 0) / leads.length) : 0;
+  const active = leads.filter(l => l.stage !== "new").length;
+  const stageCount = STAGES.map(([k, v]) => [v, leads.filter(l => (l.stage || "new") === k).length]);
+  const maxS = Math.max(1, ...stageCount.map(s => s[1]));
+  const objCount = {}; leads.forEach(l => (l.objections || []).forEach(o => objCount[o] = (objCount[o] || 0) + 1));
+  const objs = Object.entries(objCount).sort((a, b) => b[1] - a[1]); const maxO = Math.max(1, ...objs.map(o => o[1]));
+  const langCount = {}; leads.forEach(l => langCount[l.lang] = (langCount[l.lang] || 0) + 1);
+  const queue = leads.filter(l => ["hot","visit_booked","handed_off"].includes(l.stage) || (l.readiness || 0) >= 70).sort((a, b) => (b.handoff && b.handoff.urgency === "high") - (a.handoff && a.handoff.urgency === "high") || (b.readiness || 0) - (a.readiness || 0));
+  const evIcon = t => ({visit: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>', handoff: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>', hot: '<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-3 2-4 2-7 2 1 3 2 3 4"/>', lead: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', outreach: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/>', contacted: '<path d="m5 12 5 5 9-10"/>'})[t] || '<circle cx="12" cy="12" r="4"/>';
+  box.innerHTML = `
+    <h2>Counsellor desk</h2>
+    <p class="sub">Everything the agent learns lands here live. Counsellors only spend time on families who are ready, with a brief already written.</p>
+    <div class="kpis">
+      <div class="kpi"><div class="v num">${leads.length}</div><div class="k">Leads in play · ${active} in conversation</div></div>
+      <div class="kpi gold"><div class="v num">${avg}</div><div class="k">Average readiness</div></div>
+      <div class="kpi green"><div class="v num">${visits}</div><div class="k">Campus visits booked by the agent</div></div>
+      <div class="kpi"><div class="v num">${hand}</div><div class="k">Waiting for a counsellor call</div></div>
+    </div>
+    <div class="grid2">
+      <div class="box"><h3>Ready for a human <span class="c">${queue.length}</span></h3>
+        <div class="queue">${queue.length ? queue.map(l => `
+          <div class="qitem">
+            <div class="score num">${l.readiness || 0}</div>
+            <div><div class="t1">${esc(l.parent)} ${stagePill(l.stage)} ${l.handoff && l.handoff.urgency === "high" ? '<span class="pill" style="background:var(--rose);color:#fff;border-color:transparent">urgent</span>' : ""}${l.contacted ? ' <span class="pill">called</span>' : ""}</div>
+              <div class="t2">${esc(l.relation)} of ${esc(l.student)} · ${esc(l.city)} · ${esc((LANGS[l.lang] || LANGS.en).name)}${l.visit ? " · visit " + esc(l.visit.day) : ""}</div>
+              <div class="t3">${esc(l.brief || (l.handoff && l.handoff.reason) || "")}</div>
+              ${l.nba ? `<div class="t2" style="margin-top:4px">Next: ${esc(l.nba)}</div>` : ""}</div>
+            <div class="acts"><button class="btn" data-open="${esc(l.id)}">Open chat</button>${l.contacted ? "" : `<button class="btn" data-called="${esc(l.id)}">Mark called</button>`}</div>
+          </div>`).join("") : `<div style="color:var(--muted);font-size:14px">Nobody yet. Run a few conversations and hot families appear here with a brief.</div>`}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="box"><h3>Funnel</h3><div class="bars">${stageCount.map(([k, n]) => `<div class="barrow"><span>${esc(k)}</span><span class="t"><i style="width:${n / maxS * 100}%"></i></span><span class="n num">${n}</span></div>`).join("")}</div></div>
+        <div class="box"><h3>What parents are worried about</h3><div class="bars">${objs.length ? objs.map(([k, n]) => `<div class="barrow obj"><span>${esc(OBJ[k] || k)}</span><span class="t"><i style="width:${n / maxO * 100}%"></i></span><span class="n num">${n}</span></div>`).join("") : `<div style="color:var(--muted);font-size:14px">Fills in as the insight engine tags conversations.</div>`}</div></div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="box"><h3>Live activity</h3><div class="feed">${Store.events.length ? Store.events.map(e => `<div class="ev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${evIcon(e.type)}</svg><span>${esc(e.text)}</span><span class="tm">${ago(e.ts)}</span></div>`).join("") : `<div style="color:var(--muted);font-size:14px">Agent actions show up here.</div>`}</div></div>
+      <div class="box"><h3>Languages in the pipeline</h3><div class="langs">${Object.entries(LANGS).map(([k, v]) => `<div class="lang"><div class="v num">${langCount[k] || 0}</div><div class="k">${esc(v.native)}${k !== "en" ? " · " + esc(v.name) : ""}</div></div>`).join("")}</div></div>
+    </div>`;
+  box.querySelectorAll("[data-open]").forEach(b => b.onclick = () => { selectLead(b.dataset.open); setView("conv"); setPane("chat"); });
+  box.querySelectorAll("[data-called]").forEach(b => b.onclick = () => { const l = Store.lead(b.dataset.called); Store.saveLead(l.id, {contacted: true}); Store.addEvent({type: "contacted", leadId: l.id, text: "Counsellor called " + l.parent}); });
+}
+
+function renderKb(){
+  const box = $("#kbview");
+  if (box.querySelector("textarea") && document.activeElement === box.querySelector("textarea")) return;
+  box.innerHTML = `
+    <h2>Facts the agent is allowed to use</h2>
+    <p class="sub">The agent can only quote what's written here. Admissions ops edits it once and every conversation, in every language, updates instantly. Sections start with "## topic".</p>
+    <div class="warn">Everything below is placeholder content written for this demo. Swap in NIAT's verified fees, degree details and placement numbers before any real parent sees it.</div>
+    <div class="box"><h3>Knowledge base</h3><textarea id="kbtext" spellcheck="false">${esc(Store.kb())}</textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;align-items:center"><button class="btn primary" id="kbsave">Save facts</button><button class="btn" id="kbreset">Restore demo facts</button><span id="kbst" style="font-size:13px;color:var(--muted)"></span></div></div>
+    <div class="grid2">
+      <div class="box"><h3>Student stories the agent can share <span class="c">demo profiles</span></h3><div class="tablewrap"><table><thead><tr><th>Student</th><th>From</th><th>Story</th><th>Now</th></tr></thead><tbody>${ALUMNI.map(a => `<tr><td>${esc(a.name)}</td><td>${esc(a.from)}, ${esc(a.state)}</td><td>${esc(a.story)}</td><td>${esc(a.now)}</td></tr>`).join("")}</tbody></table></div></div>
+      <div class="box"><h3>Cost comparisons <span class="c">placeholder numbers</span></h3><div class="tablewrap"><table><thead><tr><th>Option</th><th>Per year</th><th>Extras</th><th>4-year total</th></tr></thead><tbody>${Object.values(COSTS).map(c => `<tr><td>${esc(c.label)}</td><td class="num">${inr(c.perYear)}</td><td class="num">${inr(c.extras)}</td><td class="num"><strong>${inr(c.perYear * c.years + c.extras)}</strong></td></tr>`).join("")}</tbody></table></div></div>
+    </div>`;
+  $("#kbsave").onclick = async () => { await Store.saveKb($("#kbtext").value); $("#kbst").textContent = Store.db ? "Saved. The agent uses this from the next reply." : "Saved for this session."; };
+  $("#kbreset").onclick = () => { $("#kbtext").value = DEFAULT_KB; };
+}
+
+function renderSys(){
+  $("#sysview").innerHTML = `
+    <h2>How the system works</h2>
+    <p class="sub">Five connected parts. A parent's WhatsApp message goes in; a booked visit or a ready-to-close brief for a human comes out.</p>
+    <div class="flow">
+      <div class="step"><div class="i">1</div><h4>Lead inbox</h4><p>Hesitant leads (form fills that never picked up a call) with city, language and what we know.</p><div class="tech">Shared database, live sync</div></div>
+      <div class="step"><div class="i">2</div><h4>Bharosa agent</h4><p>Writes in Telugu, Hindi, Tamil, Kannada, Malayalam or English. Decides on its own when to look up facts, find a student from the same state, compare costs, book a visit or call in a human.</p><div class="tech">Claude with 5 page tools</div></div>
+      <div class="step"><div class="i">3</div><h4>Insight engine</h4><p>A second model reads every exchange, tags objections, scores readiness 0 to 100, and writes a 10-second brief.</p><div class="tech">Claude structured output</div></div>
+      <div class="step"><div class="i">4</div><h4>Counsellor desk</h4><p>Live queue of families who are ready, funnel, top worries by region, every agent action logged.</p><div class="tech">Realtime dashboard</div></div>
+      <div class="step"><div class="i">5</div><h4>Facts</h4><p>Ops-edited knowledge base. The agent can only quote what's here, so it never invents fees or placement numbers.</p><div class="tech">Editable, shared</div></div>
+    </div>
+    <p class="loopnote">The loop: objections the desk sees most often tell ops which facts to strengthen, and every fact update reaches every language at once. "Simulate parent" runs a third model as a realistic skeptical parent, so the agent can be tested end to end before a real family ever sees it.</p>
+    <div class="box prod"><h3>Going live at NIAT</h3><ul>
+      <li>WhatsApp Business Cloud API webhook sends real parent messages into the same agent and posts its replies back.</li>
+      <li>Leads sync from NIAT's CRM: anyone with no response after 2 call attempts enters the inbox automatically.</li>
+      <li>Handoffs and visit bookings create tasks for counsellors in the CRM, with the brief attached.</li>
+      <li>Swap the placeholder facts for verified data, and get alumni families' consent before sharing their stories.</li>
+    </ul></div>`;
+}
+
+/* ---------- Actions ---------- */
+function selectLead(id, quiet){
+  if (ui.sel === id) return; ui.sel = id; Store.watchThread(id);
+  if (!quiet) render("all"); else { dirty.add("thread"); dirty.add("insight"); }
+}
+function setPane(p){
+  ui.pane = p; $("#conv").dataset.pane = p;
+  document.querySelectorAll(".panetabs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pane === p)));
+}
+function setView(v){
+  ui.view = v;
+  document.querySelectorAll(".view").forEach(s => s.hidden = s.id !== "v-" + v);
+  document.querySelectorAll(".navbtn").forEach(b => b.dataset.view === v ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current"));
+  render("all");
+}
+async function seedLeads(){
+  pipe("inbox", "Importing", true);
+  for (const s of SEEDS){
+    await Store.saveLead(s.id, {...s, stage: "new", readiness: 15, objections: [], primary: null, sentiment: "", nba: "", brief: "", createdAt: Date.now()});
+  }
+  Store.addEvent({type: "lead", text: SEEDS.length + " hesitant leads imported from the CRM"});
+  pipeOff("inbox"); toast("6 leads loaded. Pick one and press Simulate parent.");
+}
+
+document.querySelectorAll(".navbtn").forEach(b => b.onclick = () => setView(b.dataset.view));
+document.querySelectorAll(".panetabs button").forEach(b => b.onclick = () => setPane(b.dataset.pane));
+$("#langsel").innerHTML = Object.entries(LANGS).map(([k, v]) => `<option value="${k}">${v.name}</option>`).join("");
+$("#newlead").onclick = () => { $("#leadform").reset(); $("#dlg").showModal(); };
+$("#dlg").addEventListener("close", () => {
+  if ($("#dlg").returnValue !== "ok") return;
+  const f = new FormData($("#leadform")); const o = Object.fromEntries(f.entries());
+  if (!o.parent || !o.student) return;
+  const id = "l-" + uid();
+  Store.saveLead(id, {...o, source: o.concern ? "Added by counsellor: " + o.concern : "Added by counsellor", personality: "Cautious, polite", stage: "new", readiness: 15, objections: [], createdAt: Date.now()});
+  Store.addEvent({type: "lead", leadId: id, text: o.parent + " (" + o.city + ") added to the inbox"});
+  pipe("inbox", "Lead added"); selectLead(id); setPane("chat");
+});
+
+Store.listeners.push(kind => render(kind));
+setInterval(() => { if (ui.view === "desk") render("events"); }, 30000);
+
+(async () => {
+  render("all");
+  await Store.init();
+  try { sample = window.claude ? await window.claude.use("sample") : makeServerSample(); } catch { sample = null; }
+  if (sample){ try { const lim = await sample.limits(); if (!lim.tools) { toast("This view can't run agent tools."); } } catch {} }
+  sampleChecked = true;
+  render("all");
+})();
+})();
+</script>
+</body>
+</html>
