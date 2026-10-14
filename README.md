@@ -17,7 +17,7 @@ A multilingual AI system that takes hesitant NIAT leads (parents who filled a fo
 `api/claude.js` is a serverless function that keeps your OpenRouter API key on the server. The browser never sees it.
 The public visitor agent uses the fast model tier and real tool calls: it reads the current knowledge base, writes an opted-in prospect into the shared lead inbox, and records a follow-up request for the counsellor demo desk. A second AI call scores captured conversations and creates a counsellor brief. Tool actions appear in the chat and in the dashboard's lead/activity views.
 
-The public visitor lead, conversation, and follow-up are saved in that visitor's browser (localStorage), so each judge gets a clean, isolated demo. The consent checkbox must be enabled before any details are saved. The demo does not collect phone numbers or email addresses, and it does not contact a real counsellor. The seeded lead profiles, alumni stories, and cost figures are illustrative placeholders, not NIAT-verified information.
+The public visitor lead, conversation, and follow-up are saved in that visitor's browser (localStorage), so each judge gets a clean, isolated demo. The visitor must explicitly request the action and enable the consent checkbox before details or a follow-up are saved. The demo does not collect phone numbers or email addresses, and it does not contact a real counsellor. The seeded lead profiles, alumni stories, and cost figures are illustrative placeholders, not NIAT-verified information.
 
 ## Deploy to Vercel (about 5 minutes)
 
