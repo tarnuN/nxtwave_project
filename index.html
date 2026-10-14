@@ -905,7 +905,7 @@ function renderChat(){
     </div>
     <div class="msgs" id="msgs">${intro}${items}${streaming}${emptyNote}</div>
     <div>
-      ${sampleChecked && !sample ? `<p class="notice">The AI agent is offline. Check that /api/claude is deployed and ANTHROPIC_API_KEY is set.</p>` : ""}
+      ${sampleChecked && !sample ? `<p class="notice">The AI agent is offline. Check that /api/claude is deployed and OPENROUTER_API_KEY is set.</p>` : ""}
       <form class="composer" id="composer">
         <textarea id="compose" rows="1" placeholder="Reply as ${esc(lead.parent)} (${esc(L.name)} or English)…" ${!sample || auto ? "disabled" : ""}></textarea>
         <button class="btn primary" type="submit" ${!sample || busy || auto ? "disabled" : ""} aria-label="Send as parent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/></svg>Send</button>

@@ -1,10 +1,10 @@
-// Vercel serverless function: proxies the browser's requests to the Anthropic Messages API.
-// The API key stays on the server (set ANTHROPIC_API_KEY in Vercel > Project > Settings > Environment Variables).
+// Vercel serverless function: proxies the browser's requests to OpenRouter's Anthropic-compatible API.
+// The API key stays on the server (set OPENROUTER_API_KEY in Vercel > Project > Settings > Environment Variables).
 
 const MODELS = {
-  quick: process.env.MODEL_QUICK || "claude-haiku-5-5",
-  default: process.env.MODEL_DEFAULT || "claude-sonnet-5-5",
-  complex: process.env.MODEL_COMPLEX || process.env.MODEL_DEFAULT || "claude-sonnet-5-5",
+  quick: process.env.MODEL_QUICK || "anthropic/claude-haiku-5.5",
+  default: process.env.MODEL_DEFAULT || "anthropic/claude-sonnet-4",
+  complex: process.env.MODEL_COMPLEX || process.env.MODEL_DEFAULT || "anthropic/claude-sonnet-4",
 };
 
 // Very small guard against abuse of your key on a public demo link.
@@ -16,8 +16,8 @@ export default async function handler(req, res) {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Use POST" });
   }
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return res.status(500).json({ error: "ANTHROPIC_API_KEY is not set on the server" });
+  if (!process.env.OPENROUTER_API_KEY) {
+    return res.status(500).json({ error: "OPENROUTER_API_KEY is not set on the server" });
   }
 
   const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : (req.body || {});
@@ -37,18 +37,18 @@ export default async function handler(req, res) {
   if (json) payload.system = "Reply with only valid JSON. No prose, no code fences.";
 
   try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
+    const r = await fetch("https://openrouter.ai/api/v1/messages", {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
+        "x-api-key": process.env.OPENROUTER_API_KEY,
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify(payload),
     });
     const data = await r.json();
     if (!r.ok) {
-      return res.status(r.status).json({ error: data?.error?.message || "Anthropic API error" });
+      return res.status(r.status).json({ error: data?.error?.message || "OpenRouter API error" });
     }
     return res.status(200).json({ content: data.content, stop_reason: data.stop_reason, model: data.model });
   } catch (e) {

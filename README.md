@@ -13,23 +13,23 @@ A multilingual AI system that takes hesitant NIAT leads (parents who filled a fo
 | Facts | `index.html` | Editable knowledge base; the agent can only quote what's here |
 | Parent simulator | `index.html` | Third model plays a skeptical parent so you can demo end to end |
 
-`api/claude.js` is a serverless function that keeps your Anthropic API key on the server. The browser never sees it.
+`api/claude.js` is a serverless function that keeps your OpenRouter API key on the server. The browser never sees it.
 
 Data is saved in each visitor's browser (localStorage), so every judge gets their own clean demo.
 
 ## Deploy to Vercel (about 5 minutes)
 
-1. Get an API key at https://console.anthropic.com and set a monthly spend limit there.
+1. Get an API key at https://openrouter.ai/keys and set an appropriate credit limit.
 2. Push this folder to a GitHub repo.
 3. On https://vercel.com, click **Add New > Project** and import the repo. No build settings needed.
-4. In **Settings > Environment Variables**, add `ANTHROPIC_API_KEY` with your key. Redeploy.
+4. In **Settings > Environment Variables**, add `OPENROUTER_API_KEY` with your key. Redeploy.
 5. Open the URL, click **Load demo leads**, pick a parent, press **Simulate parent**.
 
 ### Run locally
 
 ```bash
 npm i -g vercel
-cp .env.example .env.local   # paste your key
+cp .env.example .env.local   # add your OpenRouter key
 vercel dev
 ```
 
