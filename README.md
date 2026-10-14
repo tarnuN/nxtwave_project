@@ -6,6 +6,7 @@ A multilingual AI system that takes hesitant NIAT leads (parents who filled a fo
 
 | Part | Where | What it does |
 |---|---|---|
+| Public landing page and visitor chat | `index.html` + `api/claude.js` | NIAT-style program landing page with an interactive Bharosa chat widget |
 | Lead inbox | `index.html` | Hesitant leads with city, language and context |
 | Bharosa agent | `index.html` + `api/claude.js` | Claude with 5 tools: look up facts, find a student from the same state, compare costs, book a campus visit, hand off to a counsellor. Replies in Telugu, Hindi, Tamil, Kannada, Malayalam or English |
 | Insight engine | `index.html` | Second model call: tags objections, readiness 0-100, 10-second counsellor brief |
@@ -14,6 +15,7 @@ A multilingual AI system that takes hesitant NIAT leads (parents who filled a fo
 | Parent simulator | `index.html` | Third model plays a skeptical parent so you can demo end to end |
 
 `api/claude.js` is a serverless function that keeps your OpenRouter API key on the server. The browser never sees it.
+The public chat uses the fast model tier and needs `OPENROUTER_API_KEY` with available OpenRouter credits. Provider errors are shown in the chat with a retry action.
 
 Data is saved in each visitor's browser (localStorage), so every judge gets their own clean demo.
 

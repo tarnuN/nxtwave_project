@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bharosa · NIAT parent conversion agent</title>
+<title>NIAT | AI, Data Science &amp; Robotics Programs</title>
+<meta name="description" content="Explore NIAT technology programs, admissions, campus life, and next steps. Ask Bharosa, the NIAT admissions guide, a question.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Noto+Sans+Telugu:wght@400;600&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&family=Noto+Sans+Kannada:wght@400;600&family=Noto+Sans+Malayalam:wght@400;600&display=swap" rel="stylesheet">
@@ -245,12 +246,91 @@ dialog::backdrop{background:rgba(10,12,25,.45)}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:10px;font-size:13.5px;z-index:50;max-width:90vw;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.on{opacity:1}
 
+.landing[hidden],.app[hidden]{display:none}
+.landing{--home-red:#bd171d;--home-ink:#17202d;--home-muted:#5f6876;--home-line:#e3e5e8;min-height:100vh;background:#fff;color:var(--home-ink);font-family:"Schibsted Grotesk",system-ui,sans-serif}
+.home-header{height:68px;padding:0 clamp(18px,4vw,64px);display:flex;align-items:center;gap:28px;border-bottom:1px solid #ececef;background:#fff}
+.home-brand{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--home-red);font-weight:700;line-height:1.15;min-width:265px}
+.home-brand-mark{width:36px;height:42px;display:grid;place-items:center;background:var(--home-red);color:#fff;font-family:Georgia,serif;font-size:11px;font-weight:700;line-height:1;text-align:center;clip-path:polygon(0 0,100% 0,100% 78%,50% 100%,0 78%);flex:none}
+.home-brand-name{font-size:12px;max-width:175px}
+.home-nav{display:flex;align-items:center;justify-content:flex-end;gap:clamp(12px,2.5vw,34px);margin-left:auto;min-width:0}
+.home-nav a,.home-dashboard{font-size:14px;font-weight:600;color:#30394a;text-decoration:none;white-space:nowrap}
+.home-nav a:hover,.home-dashboard:hover{color:var(--home-red)}
+.home-dashboard{border:1px solid #dedfe4;border-radius:7px;padding:8px 12px;background:#fff}
+.home-hero{position:relative;min-height:min(620px,calc(100vh - 126px));margin:22px clamp(16px,2.6vw,42px) 0;border-radius:18px;overflow:hidden;background:#151a27 url("https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=2200&q=85") center 48%/cover no-repeat;color:#fff}
+.home-hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(12,17,29,.94) 0%,rgba(15,19,31,.78) 37%,rgba(18,20,29,.22) 100%),linear-gradient(0deg,rgba(12,17,29,.46),transparent 50%)}
+.home-hero-content{position:relative;z-index:1;min-height:inherit;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:clamp(34px,6vw,88px)}
+.home-kicker{font-size:clamp(18px,1.8vw,25px);font-weight:700;margin:0 0 12px}
+.home-hero h1{max-width:780px;margin:0;font-size:clamp(38px,5.6vw,76px);line-height:1.1;letter-spacing:-.045em;font-weight:700}
+.home-hero h1 span{display:block}
+.home-spark{color:#fff;margin:0 .08em;font-size:.72em}
+.home-proof{display:flex;align-items:stretch;gap:18px;margin-top:34px}
+.home-proof-item{display:flex;flex-direction:column;gap:4px;font-size:14px;line-height:1.25}
+.home-proof-item strong{font-size:clamp(16px,1.65vw,22px);font-weight:600}
+.home-proof-divider{width:1px;background:rgba(255,255,255,.7)}
+.home-hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.home-cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:11px 19px;border-radius:8px;border:1px solid transparent;text-decoration:none;font-size:14px;font-weight:700}
+.home-cta.primary{background:var(--home-red);color:#fff}
+.home-cta.secondary{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.6);color:#fff}
+.home-cta:hover{filter:brightness(1.08)}
+.home-highlights{position:relative;z-index:2;display:flex;align-items:center;gap:8px;overflow-x:auto;margin:-1px clamp(20px,8vw,150px) 0;padding:9px 10px;background:#fffaf0;border:1px solid #e5bbb0;border-radius:0 0 9px 9px;box-shadow:0 5px 18px rgba(20,24,33,.1)}
+.home-highlights a{flex:1;text-align:center;white-space:nowrap;padding:9px 10px;border-radius:6px;text-decoration:none;color:#252b35;font-size:13px;font-weight:500}
+.home-highlights a:first-child{background:#9f171b;color:#fff;font-weight:700}
+.home-highlights a:hover{background:#f3e6dc}
+.home-highlights a:first-child:hover{background:#8d1015}
+.home-section{padding:76px clamp(22px,8vw,132px);scroll-margin-top:18px}
+.home-section:nth-of-type(even){background:#faf9f7}
+.home-section-heading{max-width:760px;margin-bottom:28px}
+.home-eyebrow{margin:0 0 7px;color:var(--home-red);font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.home-section h2{margin:0;font-size:clamp(28px,4vw,44px);letter-spacing:-.035em;line-height:1.12}
+.home-section-heading>p:last-child{color:var(--home-muted);font-size:16px;line-height:1.65}
+.home-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.home-card{padding:23px;border:1px solid var(--home-line);border-radius:12px;background:#fff}
+.home-card-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:10px;background:#fceaea;color:var(--home-red);font-size:20px;font-weight:800}
+.home-card h3{margin:14px 0 7px;font-size:18px}
+.home-card p{margin:0;color:var(--home-muted);font-size:14px;line-height:1.6}
+.home-card a{display:inline-block;margin-top:14px;color:var(--home-red);font-size:13px;font-weight:700;text-decoration:none}
+.home-collab{display:flex;flex-wrap:wrap;gap:10px}
+.home-collab span{padding:12px 17px;border:1px solid var(--home-line);border-radius:8px;background:#fff;font-size:14px;font-weight:600}
+.home-faq{max-width:850px}
+.home-faq details{border-bottom:1px solid var(--home-line);padding:16px 0}
+.home-faq summary{cursor:pointer;font-weight:700}
+.home-faq details p{color:var(--home-muted);line-height:1.65}
+.home-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;padding:25px clamp(22px,8vw,132px);background:#171b24;color:#fff;font-size:13px}
+.home-footer a{color:#fff}
+.site-chat-launch{position:fixed;z-index:30;right:24px;bottom:22px;display:flex;align-items:center;gap:10px;padding:10px 16px 10px 18px;border:0;border-radius:999px;background:#25b95a;color:#fff;box-shadow:0 8px 24px rgba(17,80,37,.26);font-size:14px;font-weight:700}
+.site-chat-launch:hover{background:#1da94f}
+.site-chat-launch svg{width:26px;height:26px}
+.site-chat-panel{position:fixed;z-index:31;right:24px;bottom:82px;width:min(380px,calc(100vw - 28px));height:min(560px,calc(100dvh - 112px));display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:#fff;border:1px solid #e2e4e9;border-radius:16px;box-shadow:0 18px 60px rgba(20,24,33,.24);overflow:hidden;color:#202534}
+.site-chat-panel[hidden]{display:none}
+.site-chat-head{display:flex;align-items:center;gap:11px;padding:15px;background:#99171b;color:#fff}
+.site-chat-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.17);font-weight:800}
+.site-chat-title{min-width:0}
+.site-chat-title strong{display:block;font-size:14px}
+.site-chat-title span{display:block;font-size:11px;opacity:.82}
+.site-chat-close{margin-left:auto;border:0;background:transparent;color:#fff;font-size:24px;line-height:1}
+.site-chat-messages{overflow:auto;padding:15px;background:#f7f7f8;display:flex;flex-direction:column;gap:10px}
+.site-chat-bubble{max-width:88%;padding:10px 12px;border-radius:13px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.site-chat-bubble.assistant{align-self:flex-start;background:#fff;border:1px solid #e8e9ed;border-top-left-radius:4px}
+.site-chat-bubble.user{align-self:flex-end;background:#e2f6e9;border-top-right-radius:4px}
+.site-chat-quick{display:flex;flex-wrap:wrap;gap:7px}
+.site-chat-quick button{border:1px solid #d4e7d9;border-radius:999px;padding:7px 10px;background:#fff;color:#266a3b;font-size:11.5px;font-weight:600}
+.site-chat-error{padding:9px 10px;border-radius:8px;background:#fff0f0;color:#8e1b23;font-size:12px;line-height:1.45}
+.site-chat-error button{display:block;margin-top:6px;border:0;background:none;color:#8e1b23;padding:0;text-decoration:underline;font-weight:700}
+.site-chat-form{display:flex;align-items:flex-end;gap:8px;padding:10px;border-top:1px solid #e8e9ed;background:#fff}
+.site-chat-form textarea{min-width:0;min-height:42px;max-height:110px;flex:1;resize:none;padding:10px;border:1px solid #dfe1e6;border-radius:10px;background:#fff;font-size:13px;color:#202534}
+.site-chat-form button{height:42px;padding:0 13px;border:0;border-radius:9px;background:#99171b;color:#fff;font-weight:700}
+.site-chat-form button:disabled{opacity:.55;cursor:wait}
+.site-chat-disclaimer{padding:0 12px 9px;background:#fff;color:#697181;font-size:10.5px}
+
 @media (max-width:1180px){
   .conv{grid-template-columns:270px minmax(0,1fr) 290px}
   .grid2{grid-template-columns:1fr}
   .flow{grid-template-columns:1fr 1fr}
   .step:nth-child(odd){border-left:0}
   .step{border-top:1px solid var(--line)}
+  .home-brand{min-width:210px}
+  .home-nav{gap:12px}
+  .home-nav a:nth-last-child(-n+2){display:none}
 }
 @media (max-width:920px){
   .node .lb{display:none}
@@ -265,6 +345,11 @@ dialog::backdrop{background:rgba(10,12,25,.45)}
   .kpis{grid-template-columns:1fr 1fr}
   .kpi:nth-child(3){border-left:0}
   .kpi:nth-child(n+3){border-top:1px solid var(--line)}
+  .home-header{gap:12px}
+  .home-brand{min-width:0}
+  .home-nav a:nth-child(n+3){display:none}
+  .home-dashboard{font-size:12px;padding:7px 9px}
+  .home-card-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:700px){
   .app{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}
@@ -280,6 +365,29 @@ dialog::backdrop{background:rgba(10,12,25,.45)}
   .form{grid-template-columns:1fr}
   .bubble,.receipt{max-width:90%}
   .receipt{width:90%}
+  .landing{min-height:100dvh}
+  .home-header{height:60px;padding:0 14px}
+  .home-brand-mark{width:31px;height:36px}
+  .home-brand-name{max-width:142px;font-size:10.5px}
+  .home-nav{display:none}
+  .home-dashboard{margin-left:auto}
+  .home-hero{min-height:calc(100dvh - 92px);margin:14px 12px 0;border-radius:13px;background-position:58% center}
+  .home-hero::before{background:linear-gradient(90deg,rgba(12,17,29,.9),rgba(15,19,31,.55)),linear-gradient(0deg,rgba(12,17,29,.4),transparent 60%)}
+  .home-hero-content{padding:30px 23px}
+  .home-hero h1{font-size:clamp(36px,10vw,56px)}
+  .home-proof{gap:12px;margin-top:26px}
+  .home-proof-item{font-size:11px}
+  .home-proof-item strong{font-size:15px}
+  .home-hero-actions{margin-top:22px}
+  .home-cta{min-height:42px;padding:9px 13px;font-size:12px}
+  .home-highlights{margin:0 12px;padding:6px}
+  .home-highlights a{flex:none;font-size:11px;padding:8px}
+  .home-section{padding:54px 20px}
+  .home-card-grid{grid-template-columns:1fr}
+  .site-chat-launch{right:14px;bottom:14px;padding:9px 13px;font-size:13px}
+  .site-chat-launch svg{width:23px;height:23px}
+  .site-chat-panel{right:10px;bottom:70px;width:calc(100vw - 20px);height:min(540px,calc(100dvh - 92px))}
+  .home-footer{padding:22px 20px}
 }
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none !important;transition:none !important}
@@ -287,7 +395,112 @@ dialog::backdrop{background:rgba(10,12,25,.45)}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="landing" id="landing">
+  <header class="home-header">
+    <a class="home-brand" href="#highlights" aria-label="NIAT home">
+      <span class="home-brand-mark">N<br>I<br>A<br>T</span>
+      <span class="home-brand-name">NxtWave of Innovation in Advanced Technologies</span>
+    </a>
+    <nav class="home-nav" aria-label="Main navigation">
+      <a href="#outcomes">Student Achievements</a>
+      <a href="#collaborations">University Collabs</a>
+      <a href="#curriculum">Programs</a>
+      <a href="#admissions">NAT Application</a>
+      <a href="#faqs">More</a>
+    </nav>
+    <button class="home-dashboard" id="open-dashboard" type="button">Counsellor dashboard</button>
+  </header>
+
+  <main>
+    <section class="home-hero" id="highlights" aria-labelledby="home-title">
+      <div class="home-hero-content">
+        <p class="home-kicker">Start Your Journey in</p>
+        <h1 id="home-title">AI/ML <span class="home-spark" aria-hidden="true">✧</span> Robotics <span>Data Science &amp; More</span></h1>
+        <div class="home-proof">
+          <div class="home-proof-item"><span>INDUSTRY-READY</span><strong>Upskilling</strong></div>
+          <span class="home-proof-divider" aria-hidden="true"></span>
+          <div class="home-proof-item"><span>EXPLORE</span><strong>Programs after 12th</strong></div>
+        </div>
+        <div class="home-hero-actions">
+          <a class="home-cta primary" href="#curriculum">Explore programs <span aria-hidden="true">→</span></a>
+          <button class="home-cta secondary" type="button" data-open-chat>Ask Bharosa</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="home-highlights" aria-label="Explore NIAT">
+      <a href="#highlights">Highlights</a>
+      <a href="#collaborations">Collaborations</a>
+      <a href="#outcomes">Outcomes</a>
+      <a href="#life">Life at NIAT</a>
+      <a href="#mentors">Mentors</a>
+      <a href="#curriculum">Curriculum</a>
+      <a href="#why-niat">Why NIAT</a>
+      <a href="#contact">Contact</a>
+      <a href="#faqs">FAQs</a>
+    </nav>
+
+    <section class="home-section" id="curriculum">
+      <div class="home-section-heading">
+        <p class="home-eyebrow">Explore what you can learn</p>
+        <h2>Build skills for a changing world</h2>
+        <p>Explore technology-focused learning paths and ask Bharosa what might suit your interests.</p>
+      </div>
+      <div class="home-card-grid">
+        <article class="home-card"><span class="home-card-icon" aria-hidden="true">AI</span><h3>Artificial Intelligence &amp; Machine Learning</h3><p>Explore data, intelligent systems, and hands-on problem solving.</p><a href="#contact" data-open-chat>Ask about this path →</a></article>
+        <article class="home-card"><span class="home-card-icon" aria-hidden="true">DS</span><h3>Data Science</h3><p>Learn how to work with data, find patterns, and communicate useful insights.</p><a href="#contact" data-open-chat>Ask about this path →</a></article>
+        <article class="home-card"><span class="home-card-icon" aria-hidden="true">R</span><h3>Robotics &amp; Technology</h3><p>Discover how software and hardware come together through practical projects.</p><a href="#contact" data-open-chat>Ask about this path →</a></article>
+      </div>
+    </section>
+
+    <section class="home-section" id="collaborations">
+      <div class="home-section-heading"><p class="home-eyebrow">Learn more</p><h2>Explore university collaborations</h2><p>Ask an admissions counsellor for current partner-university and degree details before making a decision.</p></div>
+      <div class="home-collab" aria-label="Areas to discuss"><span>Degree options</span><span>Admissions</span><span>Campus visits</span><span>Scholarships</span></div>
+    </section>
+
+    <section class="home-section" id="outcomes">
+      <div class="home-section-heading"><p class="home-eyebrow">Student journey</p><h2>Skills, projects, and next steps</h2><p>Explore the learning experience and ask for verified information about student outcomes. Individual results vary; speak with a counsellor for current, sourced details.</p></div>
+      <div class="home-card-grid">
+        <article class="home-card"><span class="home-card-icon" aria-hidden="true">01</span><h3>Learn by doing</h3><p>Build understanding through guided practice and project work.</p></article>
+        <article class="home-card" id="life"><span class="home-card-icon" aria-hidden="true">02</span><h3>Plan campus life</h3><p>Ask about accommodation, safety, student support, and what a campus visit includes.</p></article>
+        <article class="home-card" id="mentors"><span class="home-card-icon" aria-hidden="true">03</span><h3>Get guidance</h3><p>Discuss learning goals and admissions questions with a counsellor.</p></article>
+      </div>
+    </section>
+
+    <section class="home-section" id="why-niat">
+      <div class="home-section-heading"><p class="home-eyebrow">For families</p><h2>Get clear answers before you decide</h2><p>Compare your options, ask about fees and degree details, and visit a campus. Bharosa can answer common questions and point out when a counsellor should confirm the details.</p></div>
+      <a class="home-cta primary" href="#contact" data-open-chat>Chat with Bharosa</a>
+    </section>
+
+    <section class="home-section" id="admissions">
+      <div class="home-section-heading"><p class="home-eyebrow">Admissions</p><h2>Take the next step at your pace</h2><p>Ask about application steps, assessment, campus visits, or what information to prepare.</p></div>
+      <a class="home-cta primary" href="#contact" data-open-chat>Ask an admissions question</a>
+    </section>
+
+    <section class="home-section" id="faqs">
+      <div class="home-section-heading"><p class="home-eyebrow">FAQs</p><h2>Questions parents often ask</h2></div>
+      <div class="home-faq">
+        <details><summary>Can I ask about fees and scholarships?</summary><p>Yes. Bharosa can share the information currently available, but ask a counsellor to confirm current fees, scholarships, and eligibility.</p></details>
+        <details><summary>Can I visit a campus before deciding?</summary><p>Ask Bharosa about arranging a visit. A counsellor can confirm the campus, available dates, and timings.</p></details>
+        <details><summary>Can Bharosa confirm degree or placement details?</summary><p>Bharosa only uses the information available to it. It will direct you to a counsellor when a detail needs current or official confirmation.</p></details>
+      </div>
+    </section>
+
+    <section class="home-section" id="contact">
+      <div class="home-section-heading"><p class="home-eyebrow">We're here to help</p><h2>Have a question?</h2><p>Start a chat with Bharosa for admissions, programs, campus life, or next steps.</p></div>
+      <button class="home-cta primary" type="button" data-open-chat>Chat with us</button>
+    </section>
+  </main>
+  <footer class="home-footer"><span>NIAT · NxtWave of Innovation in Advanced Technologies</span><a href="#highlights">Back to top ↑</a></footer>
+
+  <section class="site-chat-panel" id="site-chat-panel" aria-label="Chat with Bharosa" aria-live="polite" hidden></section>
+  <button class="site-chat-launch" id="site-chat-launch" type="button" aria-expanded="false" aria-controls="site-chat-panel">
+    <span>Chat with us</span>
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.2 11.8a8.1 8.1 0 0 1-11.7 7.3L4 20l.9-4.5A8.1 8.1 0 1 1 20.2 11.8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.6 8.2c.2-.4.4-.5.8-.5h.4c.2 0 .4.1.5.4l.7 1.7c.1.2 0 .4-.1.6l-.5.6c.7 1.3 1.5 2.1 2.8 2.7l.5-.6c.2-.2.4-.3.6-.2l1.6.7c.3.1.4.3.4.6v.5c0 .3-.1.6-.5.7-.5.2-1.2.3-2.2-.1-2.5-1-4.1-2.7-4.9-4.1-.5-1-.6-2-.4-2.6.1-.2.3-.4.5-.4Z" fill="currentColor"/></svg>
+  </button>
+</div>
+
+<div class="app" id="dashboard" hidden>
   <nav class="rail" aria-label="Sections">
     <div class="mark" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5v-7Z" fill="#1B2366"/><path d="m8.5 10 2.4 2.4L15.5 8" stroke="#E89A00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -304,6 +517,7 @@ dialog::backdrop{background:rgba(10,12,25,.45)}
         <h1>Bharosa</h1>
         <p>Turns hesitant NIAT parents into campus visits, in their own language</p>
       </div>
+      <button class="btn" id="show-home" type="button">Public site</button>
       <div class="pipe" aria-label="Live system activity">
         <span class="node" id="n-inbox"><span class="dot"></span><span class="lb">Lead inbox</span><span class="st"></span></span>
         <span class="wire"></span>
@@ -522,7 +736,10 @@ function makeServerSample(){
     try { res = await fetch("/api/claude", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(body), signal}); }
     catch (e) { throw {code: e && e.name === "AbortError" ? "cancelled" : "upstream_error", message: String(e)}; }
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw {code: res.status === 429 ? "rate_limited" : "upstream_error", message: data.error || res.statusText};
+    if (!res.ok) {
+      const code = res.status === 429 ? "rate_limited" : res.status === 402 ? "credits_required" : res.status === 401 || res.status === 403 ? "invalid_key" : "upstream_error";
+      throw {code, message: data.error || res.statusText || "AI service request failed"};
+    }
     return data;
   }
   async function sampleFn(input, opts = {}){
@@ -569,6 +786,7 @@ function makeServerSample(){
 /* ---------- UI state ---------- */
 const ui = {view: "conv", sel: null, pane: "leads", streaming: null, busy: new Set(), auto: null, speed: "quick", ctl: new Map(), pending: new Set()};
 let sample = null, sampleChecked = false;
+const siteChat = {open: false, busy: false, messages: [], error: ""};
 
 function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("on"), 3200); }
 
@@ -581,18 +799,105 @@ function pipe(node, label, hold){
 }
 function pipeOff(node){ const el = $("#n-" + node); if (el) el.classList.remove("live"); }
 
-function codeCopy(code){
+function codeCopy(code, detail){
   return ({
     not_granted: "Claude access was declined for this page, so the live agent is off.",
     sampling_disabled: "Claude isn't available on this account.",
     rate_limited: "Too many requests right now. Wait a moment and try again.",
+    credits_required: "The AI provider needs more credits. Check the OpenRouter account balance.",
+    invalid_key: "The AI provider rejected its API key. Check OPENROUTER_API_KEY in the deployment settings.",
     session_expired: "Sign in to Claude again to continue.",
     refused: "Claude declined that message. Try rephrasing it.",
     tools_unavailable: "This view can't run agent tools. Open the artifact in the Claude app.",
     cancelled: ""
-  })[code] || "The agent couldn't reply. Try again.";
+  })[code] || (code === "upstream_error" && detail ? "AI service error: " + detail : "The agent couldn't reply. Try again.");
 }
 function clean(t){ return String(t || "").replace(/^\s*(Parent|NIAT AGENT|Agent|Bharosa)\s*:\s*/i, "").replace(/\*\*/g, "").trim(); }
+
+function renderSiteChat(){
+  const panel = $("#site-chat-panel");
+  const history = siteChat.messages.map(m => `<div class="site-chat-bubble ${m.role === "user" ? "user" : "assistant"}">${esc(m.content)}</div>`).join("");
+  const welcome = `<div class="site-chat-bubble assistant">Hi! I’m Bharosa, NIAT’s admissions guide. Ask me about programs, admissions, fees, campus life, or next steps.</div>`;
+  const suggestions = !siteChat.messages.length ? `<div class="site-chat-quick">${["Programs after 12th","Admissions process","Campus life","Fees and scholarships"].map(text => `<button type="button" data-chat-prompt="${esc(text)}">${esc(text)}</button>`).join("")}</div>` : "";
+  const typing = siteChat.busy ? `<div class="site-chat-bubble assistant" aria-label="Bharosa is replying">Bharosa is typing…</div>` : "";
+  const error = siteChat.error ? `<div class="site-chat-error" role="alert">${esc(siteChat.error)}<button type="button" data-chat-retry>Try again</button></div>` : "";
+  panel.innerHTML = `
+    <div class="site-chat-head">
+      <span class="site-chat-avatar" aria-hidden="true">B</span>
+      <div class="site-chat-title"><strong>Bharosa · NIAT guide</strong><span>Ask a question to get started</span></div>
+      <button class="site-chat-close" type="button" data-chat-close aria-label="Close chat">×</button>
+    </div>
+    <div class="site-chat-messages" id="site-chat-messages">${welcome}${history}${typing}${suggestions}${error}</div>
+    <form class="site-chat-form" id="site-chat-form">
+      <textarea id="site-chat-compose" rows="1" aria-label="Your message" placeholder="Type your question…" ${siteChat.busy ? "disabled" : ""}></textarea>
+      <button type="submit" ${siteChat.busy ? "disabled" : ""}>${siteChat.busy ? "…" : "Send"}</button>
+    </form>
+    <div class="site-chat-disclaimer">Bharosa can make mistakes. Confirm fees, eligibility, and degree details with a counsellor.</div>`;
+  const messages = $("#site-chat-messages");
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function setSiteChatOpen(open){
+  siteChat.open = open;
+  const panel = $("#site-chat-panel");
+  panel.hidden = !open;
+  $("#site-chat-launch").setAttribute("aria-expanded", String(open));
+  if (open){
+    renderSiteChat();
+    requestAnimationFrame(() => $("#site-chat-compose").focus());
+  } else {
+    $("#site-chat-launch").focus();
+  }
+}
+
+async function sendSiteChat(text, retry){
+  const question = String(text || "").trim();
+  if (siteChat.busy || (!question && !retry)) return;
+  if (!retry){
+    siteChat.messages.push({role: "user", content: question});
+    siteChat.error = "";
+  }
+  siteChat.busy = true;
+  renderSiteChat();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+  try {
+    const history = siteChat.messages.slice(-12).map(m => ({role: m.role, content: m.content}));
+    const messages = history.reduce((out, message) => {
+      const previous = out[out.length - 1];
+      if (previous && previous.role === message.role) previous.content += "\n\n" + message.content;
+      else out.push({...message});
+      return out;
+    }, []);
+    const system = `You are Bharosa, a helpful NIAT admissions guide chatting with a prospective student or parent. Answer in the language the visitor uses. Keep replies warm, clear and conversational, usually 2-4 short sentences. Use only the facts in the admissions information below; do not invent fees, scholarships, degree partners, placements, policies, or guarantees. This information may contain demo or unverified details: label them as indicative and ask a counsellor to confirm. If you do not know an answer, say so and suggest asking a NIAT counsellor. Do not claim you booked a visit or contacted a human. Admissions information:\n${Store.kb().slice(0, 12000)}`;
+    const response = await fetch("/api/claude", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({tier: "quick", messages, system}),
+      signal: controller.signal
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok){
+      const detail = data.error || response.statusText || "Request failed";
+      if (response.status === 401 || response.status === 403) throw new Error("OpenRouter rejected its API key. Check OPENROUTER_API_KEY in Vercel settings. " + detail);
+      if (response.status === 402) throw new Error("OpenRouter account needs credits. Check its balance and try again.");
+      if (response.status === 429) throw new Error("The AI service is busy or rate-limited. Wait a moment and try again.");
+      throw new Error(detail);
+    }
+    const reply = (data.content || []).filter(block => block.type === "text").map(block => block.text).join("").trim();
+    if (!reply) throw new Error("The AI service returned an empty reply. Please try again.");
+    siteChat.messages.push({role: "assistant", content: reply});
+    siteChat.error = "";
+  } catch (error){
+    siteChat.error = error && error.name === "AbortError"
+      ? "That reply took too long. Check your connection and try again."
+      : (error && error.message) || "Could not reach the AI service. Check the deployment and try again.";
+  } finally {
+    clearTimeout(timeout);
+    siteChat.busy = false;
+    renderSiteChat();
+  }
+}
 
 /* ---------- Knowledge parsing ---------- */
 function kbSections(){
@@ -722,7 +1027,7 @@ async function agentTurn(leadId, opts = {}){
     ui.streaming = null;
     if (e && e.text && e.code !== "refused" && e.code !== "cancelled") await Store.appendMsg(leadId, {id: uid(), role: "agent", text: clean(e.text) + " …", ts: Date.now(), partial: true});
     if (e && e.code === "not_granted") { sample = null; render("all"); }
-    const msg = codeCopy(e && e.code); if (msg) toast(msg);
+    const msg = codeCopy(e && e.code, e && e.message); if (msg) toast(msg);
   } finally {
     ui.busy.delete(leadId); ui.ctl.delete(leadId); ui.streaming = null; pipeOff("agent"); render("thread");
   }
@@ -1066,6 +1371,49 @@ function setView(v){
   document.querySelectorAll(".navbtn").forEach(b => b.dataset.view === v ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current"));
   render("all");
 }
+$("#open-dashboard").onclick = () => {
+  $("#landing").hidden = true;
+  $("#dashboard").hidden = false;
+  window.scrollTo(0, 0);
+  render("all");
+};
+$("#show-home").onclick = () => {
+  $("#dashboard").hidden = true;
+  $("#landing").hidden = false;
+  window.scrollTo(0, 0);
+};
+$("#site-chat-launch").onclick = () => setSiteChatOpen(!siteChat.open);
+$("#landing").addEventListener("click", e => {
+  const close = e.target.closest("[data-chat-close]");
+  if (close){ setSiteChatOpen(false); return; }
+  const retry = e.target.closest("[data-chat-retry]");
+  if (retry){ sendSiteChat("", true); return; }
+  const prompt = e.target.closest("[data-chat-prompt]");
+  if (prompt){ sendSiteChat(prompt.dataset.chatPrompt); return; }
+  const open = e.target.closest("[data-open-chat]");
+  if (open){ e.preventDefault(); setSiteChatOpen(true); }
+});
+$("#landing").addEventListener("submit", e => {
+  if (e.target.id !== "site-chat-form") return;
+  e.preventDefault();
+  const input = $("#site-chat-compose");
+  const text = input.value.trim();
+  if (!text || siteChat.busy) return;
+  input.value = "";
+  sendSiteChat(text);
+});
+$("#landing").addEventListener("keydown", e => {
+  if (e.target.id === "site-chat-compose" && e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    $("#site-chat-form").requestSubmit();
+  }
+});
+$("#landing").addEventListener("input", e => {
+  if (e.target.id === "site-chat-compose"){
+    e.target.style.height = "auto";
+    e.target.style.height = Math.min(e.target.scrollHeight, 110) + "px";
+  }
+});
 async function seedLeads(){
   pipe("inbox", "Importing", true);
   for (const s of SEEDS){
